@@ -47,7 +47,7 @@ int autoImages=0;
 int manualImages=0;
 int keyEvent=0;
 bool first = true;
-int main3()
+int main()
 {
     //Make the windows
     //cvNamedWindow("Thresholded",CV_WINDOW_NORMAL);
