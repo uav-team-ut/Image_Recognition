@@ -6,10 +6,10 @@
 using namespace cv;
 using namespace std;
 
-int main()
+int main(int argc, char** argv)
 {
 
-	IplImage* img = cvLoadImage("FindingContours.png");
+	IplImage* img = cvLoadImage("2014-10-10.jpg");
 
 	//show the original image
 	cvNamedWindow("Raw");
