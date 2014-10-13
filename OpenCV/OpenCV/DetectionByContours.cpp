@@ -9,7 +9,7 @@ using namespace std;
 int main(int argc, char** argv)
 {
 
-	IplImage* img = cvLoadImage("2014-10-10.jpg");
+	IplImage* img = cvLoadImage("test.jpg");
 
 	//show the original image
 	cvNamedWindow("Raw");

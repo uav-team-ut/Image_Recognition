@@ -5,7 +5,7 @@
 using namespace cv;
 using namespace std;
 
-int main4(int argc, char** argv)
+int mai6(int argc, char** argv)
 {
 	VideoCapture cap(0); //capture the video from webcam
 
