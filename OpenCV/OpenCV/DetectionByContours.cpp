@@ -6,10 +6,16 @@
 using namespace cv;
 using namespace std;
 
-int main(int argc, char** argv)
+//int drawLines(IplImage* img, CvPoint* pt, int sides);
+
+int main()
 {
 
+<<<<<<< HEAD
 	IplImage* img = cvLoadImage("test.jpg");
+=======
+	IplImage* img = cvLoadImage("FindingContours.png");
+>>>>>>> origin/master
 
 	//show the original image
 	cvNamedWindow("Raw");
@@ -61,10 +67,31 @@ int main(int argc, char** argv)
 			}
 
 			//drawing lines around the quadrilateral
+			
 			cvLine(img, *pt[0], *pt[1], cvScalar(0, 255, 0), 4);
 			cvLine(img, *pt[1], *pt[2], cvScalar(0, 255, 0), 4);
 			cvLine(img, *pt[2], *pt[3], cvScalar(0, 255, 0), 4);
 			cvLine(img, *pt[3], *pt[0], cvScalar(0, 255, 0), 4);
+			
+			//drawLines(img, *pt, 4);
+		}
+
+		//if there are 5 veritices in the contour(It should be a pentagon)
+		else if (result->total == 5)
+		{
+			//iterating through each point
+			CvPoint *pt[5];
+			for (int i = 0; i < 5; i++)
+			{
+				pt[i] = (CvPoint*)cvGetSeqElem(result, i);
+			}
+
+			//drawLines(img, *pt, 5);
+			cvLine(img, *pt[0], *pt[1], cvScalar(0, 0, 255), 4);
+			cvLine(img, *pt[1], *pt[2], cvScalar(0, 0, 255), 4);
+			cvLine(img, *pt[2], *pt[3], cvScalar(0, 0, 255), 4);
+			cvLine(img, *pt[3], *pt[4], cvScalar(0, 0, 255), 4);
+			cvLine(img, *pt[4], *pt[0], cvScalar(0, 0, 255), 4);
 		}
 
 		//if there are 7  vertices  in the contour(It should be a heptagon)
@@ -104,3 +131,15 @@ int main(int argc, char** argv)
 
 	return 0;
 }
+/*
+int drawLines(IplImage* img, CvPoint* pt, int sides)
+{
+	for (int i = 0; i < sides; i++) {
+		if (i + 1 < sides)
+			cvLine(img, pt[i], pt[i + 1], cvScalar(0, 0, 255), 4);
+		else
+			cvLine(img, pt[i], pt[0], cvScalar(0, 0, 255), 4);
+	}
+	return 0;
+}
+*/
