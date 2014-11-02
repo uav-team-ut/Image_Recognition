@@ -8,3 +8,5 @@ hue = img(:,:,1);
 his = imhist(hue);
 
 [peak, ind] = findpeaks(his);
+arr = [peak, ind];
+arr2 = sortrows(arr);
