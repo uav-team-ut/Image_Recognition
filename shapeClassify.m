@@ -8,7 +8,7 @@ fontSize = 20;
 
 
 % Read in image into an array.
-rgbImage = imread('test_images/canny1.jpg'); 
+rgbImage = imread('test_images/1.jpg'); 
 [rows, columns, numberOfColorBands] = size(rgbImage); 
 % Display it.
 subplot(2, 2, 1);

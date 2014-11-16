@@ -1,6 +1,6 @@
 % getedges.m
 clear; close all; clc;
-I = imread('image2.jpg');
+I = imread('test_images/zoomed.png');
 I = imresize(I, 0.25);
 bw1 = rgb2gray(I);
 bw1 = histeq(bw1);
