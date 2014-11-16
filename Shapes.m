@@ -36,7 +36,7 @@ subplot(2, 2, 3);
 imshow(binaryImage, []);
 title('Initial (Noisy) Binary Image', 'FontSize', fontSize);
 % Remove small objects.
-binaryImage = bwareaopen(binaryImage, 1000);
+binaryImage = bwareaopen(binaryImage, 100);
 % Display it.
 subplot(2, 2, 4);
 imshow(binaryImage, []);
@@ -74,9 +74,10 @@ for blobNumber = 1 : numberOfObjects
 		thisBoundary = boundaries{k};
 		plot(thisBoundary(:,2), thisBoundary(:,1), 'b', 'LineWidth', 3);
 	end
-	% Display this bounary in red.
+	% Display this boundary in red.
 	thisBoundary = boundaries{blobNumber};
 	plot(thisBoundary(:,2), thisBoundary(:,1), 'r', 'LineWidth', 3);
+	
 	subplot(2, 2, 4); % Switch to lower right image.
 	
 	% Determine the shape.
