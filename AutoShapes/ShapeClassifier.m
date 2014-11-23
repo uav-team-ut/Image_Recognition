@@ -9,7 +9,7 @@ function ShapeClassifier( img_orig, img_in )
 % 	workspace;  % Make sure the workspace panel is showing.
 	fontSize = 20;
 
-
+	figure,
 	% Read in image into an array.
 	rgbImage = img_in;
 	[rows, columns, numberOfColorBands] = size(rgbImage); 
@@ -24,27 +24,29 @@ function ShapeClassifier( img_orig, img_in )
 	% If it's monochrome (indexed), convert it to color. 
 	if numberOfColorBands > 1
 		grayImage = rgbImage(:,:,2);
+		%grayImage = rgb2gray(grayImage);
 	else
 		% It's already a gray scale image.
 		grayImage = rgbImage;
 	end
 	% Display it.
 	subplot(2, 2, 2);
-	imshow(grayImage, []);
+	imshow(grayImage);
 	title('Grayscale Image', 'FontSize', fontSize);
 	% Binarize the image.
 	binaryImage = grayImage > 120;
-	% % Display it.
-	% subplot(2, 2, 3);
-	% imshow(binaryImage, []);
+	%binaryImage = im2bw(grayImage, .4);
+	% Display it.
+	subplot(2, 2, 3);
+	imshow(binaryImage);
 	title('Initial (Noisy) Binary Image', 'FontSize', fontSize);
 	% Remove small objects.
-	binaryImage = bwareaopen(binaryImage, 100);
-	% % Display it.
-	% subplot(2, 2, 4);
-	% imshow(binaryImage, []);
+	binaryImage = bwareaopen(binaryImage, 50);
+	% Display it.
+	subplot(2, 2, 4);
+	imshow(binaryImage, []);
 	title('Cleaned Binary Image', 'FontSize', fontSize);
-	[labeledImage numberOfObjects] = bwlabel(binaryImage);
+	[labeledImage, numberOfObjects] = bwlabel(binaryImage);
 	blobMeasurements = regionprops(labeledImage,...
 		'Perimeter', 'Area', 'FilledArea', 'Solidity', 'Centroid'); 
 	% Get the outermost boundaries of the objects, just for fun.
@@ -59,6 +61,7 @@ function ShapeClassifier( img_orig, img_in )
 	circularities = perimeters .^2 ./ (4 * pi * filledAreas);
 	% Print to command window.
 	fprintf('#, Perimeter,        Area, Filled Area, Solidity, Circularity\n');
+	numberOfObjects
 	for blobNumber = 1 : numberOfObjects
 		fprintf('%d, %9.3f, %11.3f, %11.3f, %8.3f, %11.3f\n', ...
 			blobNumber, perimeters(blobNumber), areas(blobNumber), ...

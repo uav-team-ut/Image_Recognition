@@ -1,7 +1,7 @@
-function [ img_out ] = Edger( file, type )
+function [ img_out ] = Edger( img_orig, type )
 %EDGER Summary of this function goes here
 %   Detailed explanation goes here
-	I = imread(file);
+	I = img_orig;
 	I = imresize(I, 0.25);
 	bw1 = rgb2gray(I);
 	bw1 = histeq(bw1);
@@ -24,21 +24,19 @@ function [ img_out ] = Edger( file, type )
 	lh1 = edge(h1,'log');
 	lh2 = edge(h2,'log');
 	
-	switch type,
-		case 'can1'
+	if strcmp(type,'can1') == 1,
 			img_out = ch1;
-		case 'can2'
+			%figure,imshow(ch1),title('Canny Edges #1');
+	elseif strcmp(type,'can2') == 1,
 			img_out = ch2;
-		case 'sob1'
+	elseif strcmp(type,'sob1') == 1,
 			img_out = sh1;
-		case 'sob2'
+	elseif strcmp(type,'sob2') == 1,
 			img_out = sh2;
-		case 'lap1'
+	elseif strcmp(type,'lap1') == 1,
 			img_out = lh1;
-		case 'lap2'
+	elseif strcmp(type,'lap2') == 1,
 			img_out = lh2;
-		otherwise
-			img_out = zeros(100);
 	end
 			
 
