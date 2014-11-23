@@ -10,8 +10,6 @@ function [ img_out ] = Edger( file, type )
 	hsv = rgb2hsv(I);
 	h1 = hsv(:,:,1);
 	h2 = histeq(h1);
-	figure
-	imshow(h1)
 
 	[tc1,canny1] = edge(bw1,'canny');
 	[tc2,canny2] = edge(bw2,'canny');
