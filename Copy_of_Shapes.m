@@ -31,15 +31,15 @@ imshow(grayImage, []);
 title('Grayscale Image', 'FontSize', fontSize);
 % Binarize the image.
 binaryImage = grayImage > 120;
-% % Display it.
-% subplot(2, 2, 3);
-% imshow(binaryImage, []);
+% Display it.
+subplot(2, 2, 3);
+imshow(binaryImage, []);
 title('Initial (Noisy) Binary Image', 'FontSize', fontSize);
 % Remove small objects.
 binaryImage = bwareaopen(binaryImage, 100);
-% % Display it.
-% subplot(2, 2, 4);
-% imshow(binaryImage, []);
+% Display it.
+subplot(2, 2, 4);
+imshow(binaryImage, []);
 title('Cleaned Binary Image', 'FontSize', fontSize);
 [labeledImage numberOfObjects] = bwlabel(binaryImage);
 blobMeasurements = regionprops(labeledImage,...
@@ -76,38 +76,35 @@ for blobNumber = 1 : numberOfObjects
 	end
 	% Display this boundary in red.
 	thisBoundary = boundaries{blobNumber};
-	plot(thisBoundary(:,2), thisBoundary(:,1), 'b', 'LineWidth', 3);
+	plot(thisBoundary(:,2), thisBoundary(:,1), 'r', 'LineWidth', 3);
 	
-	%subplot(2, 2, 4); % Switch to lower right image.
+	subplot(2, 2, 4); % Switch to lower right image.
 	
 	% Determine the shape.
 	if circularities(blobNumber) < 1.2
-% 		message = sprintf('The circularity of object #%d is %.3f,\nso the object is a circle',...
-% 			blobNumber, circularities(blobNumber));
+		message = sprintf('The circularity of object #%d is %.3f,\nso the object is a circle',...
+			blobNumber, circularities(blobNumber));
 		shape = 'circle';
 	elseif circularities(blobNumber) < 1.6
-% 		message = sprintf('The circularity of object #%d is %.3f,\nso the object is a square',...
-% 			blobNumber, circularities(blobNumber));
+		message = sprintf('The circularity of object #%d is %.3f,\nso the object is a square',...
+			blobNumber, circularities(blobNumber));
 		shape = 'square';
 	elseif circularities(blobNumber) > 1.6 && circularities(blobNumber) < 2.0
-% 		message = sprintf('The circularity of object #%d is %.3f,\nso the object is an isocoles triangle',...
-% 			blobNumber, circularities(blobNumber));
+		message = sprintf('The circularity of object #%d is %.3f,\nso the object is an isocoles triangle',...
+			blobNumber, circularities(blobNumber));
 		shape = 'triangle';
 	else
-% 		message = sprintf('The circularity of object #%d is %.3f,\nso the object is something else.',...
-% 			blobNumber, circularities(blobNumber));
+		message = sprintf('The circularity of object #%d is %.3f,\nso the object is something else.',...
+			blobNumber, circularities(blobNumber));
 		shape = 'something else';
 	end
-	
 	% Display in overlay above the object
-	if strcmp(shape, 'something else') == 0,
-		overlayMessage = sprintf('Object #%d = %s\ncirc = %.2f, s = %.2f', ...
-			blobNumber, shape, circularities(blobNumber), solidities(blobNumber));
-		text(blobMeasurements(blobNumber).Centroid(1), blobMeasurements(blobNumber).Centroid(2), ...
-			overlayMessage, 'Color', 'r');
+	overlayMessage = sprintf('Object #%d = %s\ncirc = %.2f, s = %.2f', ...
+		blobNumber, shape, circularities(blobNumber), solidities(blobNumber));
+	text(blobMeasurements(blobNumber).Centroid(1), blobMeasurements(blobNumber).Centroid(2), ...
+		overlayMessage, 'Color', 'r');
+	button = questdlg(message, 'Continue', 'Continue', 'Cancel', 'Continue');
+	if strcmp(button, 'Cancel')
+		break;
 	end
-% 	button = questdlg(message, 'Continue', 'Continue', 'Cancel', 'Continue');
-% 	if strcmp(button, 'Cancel')
-% 		break;
-% 	end
 end

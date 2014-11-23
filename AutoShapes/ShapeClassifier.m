@@ -1,14 +1,21 @@
-function [ output_args ] = ShapeClassifier( img_in )
+function ShapeClassifier( img_orig, img_in )
 %SHAPECLASSIFIER Summary of this function goes here
 %   Detailed explanation goes here
 
+% 	clc;    % Clear the command window.
+% 	close all;  % Close all figures (except those of imtool.)
+% 	imtool close all;  % Close all imtool figures.
+% 	clear;  % Erase all existing variables.
+% 	workspace;  % Make sure the workspace panel is showing.
 	fontSize = 20;
+
+	figure,
 	% Read in image into an array.
 	rgbImage = img_in;
 	[rows, columns, numberOfColorBands] = size(rgbImage); 
 	% Display it.
 	subplot(2, 2, 1);
-	imshow(rgbImage, []);
+	imshow(img_orig, []);
 	title('Input Image', 'FontSize', fontSize);
 	% Enlarge figure to full screen.
 	set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
@@ -17,27 +24,29 @@ function [ output_args ] = ShapeClassifier( img_in )
 	% If it's monochrome (indexed), convert it to color. 
 	if numberOfColorBands > 1
 		grayImage = rgbImage(:,:,2);
+		%grayImage = rgb2gray(grayImage);
 	else
 		% It's already a gray scale image.
 		grayImage = rgbImage;
 	end
 	% Display it.
 	subplot(2, 2, 2);
-	imshow(grayImage, []);
+	imshow(grayImage);
 	title('Grayscale Image', 'FontSize', fontSize);
 	% Binarize the image.
 	binaryImage = grayImage > 120;
+	%binaryImage = im2bw(grayImage, .4);
 	% Display it.
 	subplot(2, 2, 3);
-	imshow(binaryImage, []);
+	imshow(binaryImage);
 	title('Initial (Noisy) Binary Image', 'FontSize', fontSize);
 	% Remove small objects.
-	binaryImage = bwareaopen(binaryImage, 100);
+	binaryImage = bwareaopen(binaryImage, 50);
 	% Display it.
 	subplot(2, 2, 4);
 	imshow(binaryImage, []);
 	title('Cleaned Binary Image', 'FontSize', fontSize);
-	[labeledImage numberOfObjects] = bwlabel(binaryImage);
+	[labeledImage, numberOfObjects] = bwlabel(binaryImage);
 	blobMeasurements = regionprops(labeledImage,...
 		'Perimeter', 'Area', 'FilledArea', 'Solidity', 'Centroid'); 
 	% Get the outermost boundaries of the objects, just for fun.
@@ -52,6 +61,7 @@ function [ output_args ] = ShapeClassifier( img_in )
 	circularities = perimeters .^2 ./ (4 * pi * filledAreas);
 	% Print to command window.
 	fprintf('#, Perimeter,        Area, Filled Area, Solidity, Circularity\n');
+	numberOfObjects
 	for blobNumber = 1 : numberOfObjects
 		fprintf('%d, %9.3f, %11.3f, %11.3f, %8.3f, %11.3f\n', ...
 			blobNumber, perimeters(blobNumber), areas(blobNumber), ...
@@ -72,36 +82,39 @@ function [ output_args ] = ShapeClassifier( img_in )
 		end
 		% Display this boundary in red.
 		thisBoundary = boundaries{blobNumber};
-		plot(thisBoundary(:,2), thisBoundary(:,1), 'r', 'LineWidth', 3);
+		plot(thisBoundary(:,2), thisBoundary(:,1), 'b', 'LineWidth', 3);
 
-		subplot(2, 2, 4); % Switch to lower right image.
+		%subplot(2, 2, 4); % Switch to lower right image.
 
 		% Determine the shape.
 		if circularities(blobNumber) < 1.2
-			message = sprintf('The circularity of object #%d is %.3f,\nso the object is a circle',...
-				blobNumber, circularities(blobNumber));
+	% 		message = sprintf('The circularity of object #%d is %.3f,\nso the object is a circle',...
+	% 			blobNumber, circularities(blobNumber));
 			shape = 'circle';
 		elseif circularities(blobNumber) < 1.6
-			message = sprintf('The circularity of object #%d is %.3f,\nso the object is a square',...
-				blobNumber, circularities(blobNumber));
+	% 		message = sprintf('The circularity of object #%d is %.3f,\nso the object is a square',...
+	% 			blobNumber, circularities(blobNumber));
 			shape = 'square';
 		elseif circularities(blobNumber) > 1.6 && circularities(blobNumber) < 2.0
-			message = sprintf('The circularity of object #%d is %.3f,\nso the object is an isocoles triangle',...
-				blobNumber, circularities(blobNumber));
+	% 		message = sprintf('The circularity of object #%d is %.3f,\nso the object is an isocoles triangle',...
+	% 			blobNumber, circularities(blobNumber));
 			shape = 'triangle';
 		else
-			message = sprintf('The circularity of object #%d is %.3f,\nso the object is something else.',...
-				blobNumber, circularities(blobNumber));
+	% 		message = sprintf('The circularity of object #%d is %.3f,\nso the object is something else.',...
+	% 			blobNumber, circularities(blobNumber));
 			shape = 'something else';
 		end
+
 		% Display in overlay above the object
-		overlayMessage = sprintf('Object #%d = %s\ncirc = %.2f, s = %.2f', ...
-			blobNumber, shape, circularities(blobNumber), solidities(blobNumber));
-		text(blobMeasurements(blobNumber).Centroid(1), blobMeasurements(blobNumber).Centroid(2), ...
-			overlayMessage, 'Color', 'r');
-		button = questdlg(message, 'Continue', 'Continue', 'Cancel', 'Continue');
-		if strcmp(button, 'Cancel')
-			break;
+		if strcmp(shape, 'something else') == 0,
+			overlayMessage = sprintf('Object #%d = %s\ncirc = %.2f, s = %.2f', ...
+				blobNumber, shape, circularities(blobNumber), solidities(blobNumber));
+			text(blobMeasurements(blobNumber).Centroid(1), blobMeasurements(blobNumber).Centroid(2), ...
+				overlayMessage, 'Color', 'r');
 		end
+	% 	button = questdlg(message, 'Continue', 'Continue', 'Cancel', 'Continue');
+	% 	if strcmp(button, 'Cancel')
+	% 		break;
+	% 	end
 	end
 end
