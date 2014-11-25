@@ -36,12 +36,12 @@ mserMask = false(size(histImage));
 ind = sub2ind(size(mserMask), mserRegionsPixels(:,2), mserRegionsPixels(:,1));
 mserMask(ind) = true;
 
-surfMask = false(size(histImage));
-ind = sub2ind(size(surfMask), SURFPts(:,2), SURFPts(:,1));
-surfMask(ind) = true;
+%surfMask = false(size(histImage));
+%ind = sub2ind(size(surfMask), SURFPts(:,2), SURFPts(:,1));
+%surfMask(ind) = true;
 
-surfAndMSERIntersection = SURFPts & mserMask;
-figure; imshowpair(edgeMask2, edgeAndMSERIntersection, 'montage');
+%surfAndMSERIntersection = SURFPts & mserMask;
+%figure; imshowpair(edgeMask2, edgeAndMSERIntersection, 'montage');
 
 edgeAndMSERIntersection = edgeMask2 & mserMask;
 figure; imshowpair(edgeMask2, edgeAndMSERIntersection, 'montage');
