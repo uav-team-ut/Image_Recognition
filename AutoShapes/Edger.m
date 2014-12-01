@@ -2,7 +2,7 @@ function [ img_out ] = Edger( img_orig, type )
 %EDGER Summary of this function goes here
 %   Detailed explanation goes here
 	I = img_orig;
-	I = imresize(I, 0.25);
+	%I = imresize(I, 0.25);
 	bw1 = rgb2gray(I);
 	bw1 = histeq(bw1);
 	bw2 = .37*I(:,:,1) + .47*I(:,:,2) + .18*I(:,:,3);

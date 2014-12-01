@@ -21,27 +21,27 @@ function ShapeClassifier( img_orig, img_in )
 	set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
 	% Give a name to the title bar.
 	set(gcf,'name','Shape Recognition Demo','numbertitle','off') 
-	% If it's monochrome (indexed), convert it to color. 
-	if numberOfColorBands > 1
-		grayImage = rgbImage(:,:,2);
-		%grayImage = rgb2gray(grayImage);
-	else
-		% It's already a gray scale image.
-		grayImage = rgbImage;
-	end
+% 	% If it's monochrome (indexed), convert it to color. 
+% 	if numberOfColorBands > 1
+% 		grayImage = rgbImage(:,:,2);
+% 		%grayImage = rgb2gray(grayImage);
+% 	else
+% 		% It's already a gray scale image.
+% 		grayImage = rgbImage;
+% 	end
+% 	% Display it.
+% 	subplot(2, 2, 2);
+% 	imshow(grayImage);
+% 	title('Grayscale Image', 'FontSize', fontSize);
+% 	% Binarize the image.
+% 	binaryImage = grayImage > 120;
+	binaryImage = rgbImage;
 	% Display it.
 	subplot(2, 2, 2);
-	imshow(grayImage);
-	title('Grayscale Image', 'FontSize', fontSize);
-	% Binarize the image.
-	binaryImage = grayImage > 120;
-	%binaryImage = im2bw(grayImage, .4);
-	% Display it.
-	subplot(2, 2, 3);
 	imshow(binaryImage);
 	title('Initial (Noisy) Binary Image', 'FontSize', fontSize);
 	% Remove small objects.
-	binaryImage = bwareaopen(binaryImage, 50);
+	binaryImage = bwareaopen(binaryImage, 100);
 	% Display it.
 	subplot(2, 2, 4);
 	imshow(binaryImage, []);
