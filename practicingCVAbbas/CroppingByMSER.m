@@ -1,6 +1,6 @@
 colorImage = imread('test_images\2014-10-26-2.jpg');
 origImage = colorImage;
-%figure; imshow(colorImage); title('Image');
+figure; imshow(colorImage); title('Image');
 
 hsv = rgb2hsv(colorImage);
 histImage = hsv(:,:,1);

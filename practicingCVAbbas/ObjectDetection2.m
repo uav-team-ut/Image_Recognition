@@ -1,4 +1,4 @@
-colorImage = imread('test_images\2014-10-26-2.jpg');
+colorImage = imread('test_images\IMG_2376.jpg');
 origImage = colorImage;
 %figure; imshow(colorImage); title('Image');
 
