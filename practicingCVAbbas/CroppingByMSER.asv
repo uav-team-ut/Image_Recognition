@@ -1,5 +1,5 @@
-colorImage = imread('test_images\2014-10-26.jpg');
-%colorImage = imresize(colorImage, .25);
+colorImage = imread('test_images\IMG_2376.jpg');
+colorImage = imresize(colorImage, .25);
 origImage = colorImage;
 figure; imshow(colorImage); title('Image');
 
