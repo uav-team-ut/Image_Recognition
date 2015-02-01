@@ -1,5 +1,13 @@
+%colorImage = imread('test_images\IMG_2376.jpg');
 colorImage = imread('test_images\2014-10-26.jpg');
-%colorImage = imresize(colorImage, .25);
+arrSize = size(colorImage);
+arrSize
+threshold = 1000;
+if max(arrSize) > threshold
+    rSize = threshold / (max(arrSize)*1.5);
+    rSize
+    colorImage = imresize(colorImage, rSize);
+end
 origImage = colorImage;
 figure; imshow(colorImage); title('Image');
 
