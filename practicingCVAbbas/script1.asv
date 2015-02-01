@@ -2,8 +2,7 @@ colorImage = imread('test_images\IMG_2376.jpg');
 origImage = colorImage;
 arrSize = size(origImage);
 arrSize
-if max(arrSize) > 1000
-    rSize = 1000 / max(arrSize);
+if arrSize(
 %origImage = imresize(origImage, .25);
 figure; imshow(colorImage); title('Image');
 
