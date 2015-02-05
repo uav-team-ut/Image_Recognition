@@ -1,4 +1,4 @@
-function realVideo()
+function frameaccquisition()
  
 % Define frame rate
 NumberFrameDisplayPerSecond=10;
@@ -9,14 +9,11 @@ hFigure=figure(1);
 % Set-up webcam video input
 try
    % For windows
-   vid = videoinput('winvideo', 1);
+   %vid = videoinput('HP Truevision HD', 1);
+   vid = webcam(1);
 catch
-   try
-      % For macs.
-      vid = videoinput('macvideo', 1);
-   catch
+ 
       errordlg('No webcam available');
-   end
 end
  
 % Set parameters for video
