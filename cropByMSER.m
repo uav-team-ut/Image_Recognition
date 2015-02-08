@@ -14,30 +14,30 @@ colorImage = image;
 %bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
 for i=1:1
-histImage = hsv(:,:,i);
-%histImage2 = histeq(histImage);
+    histImage = hsv(:,:,i);
+    %histImage2 = histeq(histImage);
 
-mserRegions = detectMSERFeatures(histImage);
-mserRegionsPixels = vertcat(cell2mat(mserRegions.PixelList));  % extract regions
+    mserRegions = detectMSERFeatures(histImage);
+    mserRegionsPixels = vertcat(cell2mat(mserRegions.PixelList));  % extract regions
 
-mserMask = false(size(histImage));
-if (size(mserRegionsPixels) > 0)
-    ind = sub2ind(size(mserMask), mserRegionsPixels(:,2), mserRegionsPixels(:,1));
-end
-mserMask(ind) = true;
+    mserMask = false(size(histImage));
+    if (size(mserRegionsPixels) > 0)
+        ind = sub2ind(size(mserMask), mserRegionsPixels(:,2), mserRegionsPixels(:,1));
+    end
+    mserMask(ind) = true;
 
-se1=strel('disk',25);
-se2=strel('disk',7);
+    se1=strel('disk',25);
+    se2=strel('disk',7);
 
-afterMorphologyMask = imclose(mserMask,se1);
-afterMorphologyMask = imopen(mserMask,se2);
+    afterMorphologyMask = imclose(mserMask,se1);
+    afterMorphologyMask = imopen(mserMask,se2);
 
-areaThreshold = threshold; % threshold in pixels
-connComp = bwconncomp(afterMorphologyMask);
-stats = regionprops(connComp,'BoundingBox','Area');
-boxes = round(vertcat(stats(vertcat(stats.Area) > areaThreshold).BoundingBox));
+    areaThreshold = threshold; % threshold in pixels
+    connComp = bwconncomp(afterMorphologyMask);
+    stats = regionprops(connComp,'BoundingBox','Area');
+    boxes = round(vertcat(stats(vertcat(stats.Area) > areaThreshold).BoundingBox));
 
-matrix = [;boxes];
+    matrix = [;boxes];
 end
 %to print cropped image
 %imcrop(origImage, boxes(i,:));
