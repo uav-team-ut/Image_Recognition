@@ -1,8 +1,17 @@
 colorImage = imread('test_images\IMG_2376.jpg');
-colorImage = imresize(colorImage, .25);
+%colorImage = imread('test_images\2014-10-26.jpg');
+%colorImage = imread('test_images\2014-10-26_triangle.jpg');
+arrSize = size(colorImage);
+%arrSize
+threshold = 750;
+if max(arrSize) > threshold
+    rSize = threshold / (max(arrSize));
+    %rSize
+    colorImage = imresize(colorImage, rSize);
+end
 origImage = colorImage;
 figure; imshow(colorImage); title('Image');
-
+bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
 for i=1:3
     histImage = hsv(:,:,i);
@@ -31,7 +40,9 @@ for i=1:3
 %     plot(mserRegions);
 
     mserMask = false(size(histImage));
-    ind = sub2ind(size(mserMask), mserRegionsPixels(:,2), mserRegionsPixels(:,1));
+    if (size(mserRegionsPixels) > 0)
+        ind = sub2ind(size(mserMask), mserRegionsPixels(:,2), mserRegionsPixels(:,1));
+    end
     mserMask(ind) = true;
 
     se1=strel('disk',25);
@@ -40,10 +51,11 @@ for i=1:3
     afterMorphologyMask = imclose(mserMask,se1);
     afterMorphologyMask = imopen(mserMask,se2);
 
-    areaThreshold = 1000; % threshold in pixels
+    areaThreshold = threshold; % threshold in pixels
     connComp = bwconncomp(afterMorphologyMask);
     stats = regionprops(connComp,'BoundingBox','Area');
     boxes = round(vertcat(stats(vertcat(stats.Area) > areaThreshold).BoundingBox));
+    boxes
     for i=1:size(boxes,1)
         figure;
         imshow(imcrop(origImage, boxes(i,:))); % Display segmented text
