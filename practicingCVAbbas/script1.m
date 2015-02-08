@@ -1,10 +1,12 @@
 colorImage = imread('test_images\IMG_2376.jpg');
+arrSize = size(colorImage);
+threshold = 750
+if max(arrSize) > threshold
+    rSize = threshold / max(arrSize);
+    rSize
+    colorImage = imresize(colorImage, rSize);
+end
 origImage = colorImage;
-arrSize = size(origImage);
-arrSize
-if max(arrSize) > 1000
-    rSize = 1000 / max(arrSize);
-%origImage = imresize(origImage, .25);
 figure; imshow(colorImage); title('Image');
 
 gray = rgb2gray(origImage);
