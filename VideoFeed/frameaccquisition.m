@@ -5,12 +5,13 @@ NumberFrameDisplayPerSecond=10;
  
 % Open figure
 hFigure=figure(1);
- 
+
+vid = imaq.VideoDevice('winvideo');
 % Set-up webcam video input
 try
    % For windows
    %vid = videoinput('HP Truevision HD', 1);
-   vid = webcam(1);
+   %vid = webcam(1);
 catch
  
       errordlg('No webcam available');
