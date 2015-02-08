@@ -5,7 +5,7 @@ videoSource = 'camera'; % options are 'file' or 'camera'
 if isequal(videoSource,'file')
     % import video from a file using the vision.VideoFileReader System Object
     videoReaderObject = vision.VideoFileReader('rawVideo_640x480.avi');
-    videoReaderObject.VideoOutputDataType = 'uint8';
+    videoReaderObject.VideoOutputDataType = 'rgb';
 elseif isequal(videoSource,'camera')
     % import video from camera using the imaq.VideoDevice System Object
     videoReaderObject = imaq.VideoDevice('winvideo'); 
@@ -15,12 +15,13 @@ end
 
 % Setup video player
 videoPlayerObject = vision.VideoPlayer();
-set(videoPlayerObject,'Position',[9 594 657 510]);
+%set(videoPlayerObject,'Position',[250 700 657 510]);
 
 % Step the video reader to extract each frame and then visualize
 idx = 0;
-while(idx<=100000) % run for 10 steps
-    idx = idx + 100; % update iteration number
+while(idx<=1000) % run for X steps
+    idx = idx + 1; % update iteration number
+	pause(1); % pause before interating
     frame = step(videoReaderObject);
     step(videoPlayerObject,frame);
     
