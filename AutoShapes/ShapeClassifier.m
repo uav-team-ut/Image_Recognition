@@ -41,7 +41,7 @@ function ShapeClassifier( img_orig, img_in )
 	imshow(binaryImage);
 	title('Initial (Noisy) Binary Image', 'FontSize', fontSize);
 	% Remove small objects.
-	binaryImage = bwareaopen(binaryImage, 100);
+	binaryImage = bwareaopen(binaryImage, 50);
 	% Display it.
 	subplot(2, 2, 4);
 	imshow(binaryImage, []);
