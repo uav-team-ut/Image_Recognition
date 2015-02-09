@@ -1,5 +1,5 @@
-colorImage = imread('test_images\IMG_2376.jpg');
-%colorImage = imread('test_images\2014-10-26.jpg');
+%colorImage = imread('test_images\IMG_2376.jpg');
+colorImage = imread('test_images\2014-10-26.jpg');
 %colorImage = imread('test_images\2014-10-26_triangle.jpg');
 arrSize = size(colorImage);
 %arrSize
@@ -13,7 +13,7 @@ origImage = colorImage;
 figure; imshow(colorImage); title('Image');
 bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
-for i=1:3
+for i=1:1
     histImage = hsv(:,:,i);
     histImage2 = histeq(histImage);
     %histImage3 = histeq(rgb2hsv(origImage));

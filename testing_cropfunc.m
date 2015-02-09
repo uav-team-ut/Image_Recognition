@@ -4,6 +4,10 @@ threshold = 750;
 img = resizeImage(img, threshold);
 boxes = cropByMSER(img, threshold);
 boxes
+
 for i=1:size(boxes)
-    figure; imshow(imcrop(img, boxes(i,:)));
+    %create cropped image
+    crop = imcrop(img, boxes(i,:));
+    %show cropped image
+    %figure; imshow(crop);
 end
