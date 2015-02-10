@@ -13,7 +13,7 @@ colorImage = image;
 %origImage = colorImage;
 %bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
-for i=1:1
+for i=1:3
 histImage = hsv(:,:,i);
 %histImage2 = histeq(histImage);
 

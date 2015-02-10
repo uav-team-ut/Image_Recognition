@@ -13,6 +13,8 @@ origImage = colorImage;
 figure; imshow(colorImage); title('Image');
 bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
+figure; imshow(bw); title('bw');
+figure;imshow(hsv);title('hsv');
 for i=1:1
     histImage = hsv(:,:,i);
     histImage2 = histeq(histImage);
