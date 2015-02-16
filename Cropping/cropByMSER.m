@@ -5,19 +5,13 @@ function [ matrix ] = cropByMSER( image, threshold )
 %       - image - image matrix, actual matrix
 
 colorImage = image;
-% arrSize = size(colorImage);
-% threshold = 750;
-% if max(arrSize) > threshold
-%     rSize = threshold / (max(arrSize));
-%     %rSize
-%     colorImage = imresize(colorImage, rSize);
-% end
-%origImage = colorImage;
-%bw = rgb2gray(colorImage);
+%resizing done be resizeImage function
+bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
 matrix = [];
 for i=1:1
-    histImage = hsv(:,:,i);
+    histImage = adapthisteq(bw);
+    %histImage = hsv(:,:,i);
     %histImage2 = histeq(histImage);
 
     mserRegions = detectMSERFeatures(histImage);

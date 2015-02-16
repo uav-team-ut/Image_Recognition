@@ -3,25 +3,55 @@ arrSize = size(colorImage);
 threshold = 750
 if max(arrSize) > threshold
     rSize = threshold / max(arrSize);
-    rSize
     colorImage = imresize(colorImage, rSize);
 end
 origImage = colorImage;
-figure; imshow(colorImage); title('Image');
+figure; imshow(origImage); title('Image');
 
 gray = rgb2gray(origImage);
-histImage2 = histeq(gray);
-histImage = adapthisteq(gray);
+hsv = rgb2hsv(origImage);
+
+histImage1 = histeq(gray);
+histImage2 = adapthisteq(gray);
+histImage3 = histeq(hsv(:,:,1));
+histImage4 = adapthisteq(hsv(:,:,1));
 
 %histImage = hsv(:,:,1);
 %histImage2 = histeq(histImage);
 
-figure;imshow(histImage);title('Adaptive HistEQ');
-figure;imshow(histImage2);title('Regular HistEQ');
+figure;imshow(histImage1);title('Regular HistEQ of gray');
+figure;imshow(histImage2);title('Adaptive HistEQ of gray');
+figure;imshow(histImage3);title('Regular HistEQ of hue');
+figure;imshow(histImage4);title('Adaptive HistEQ of hue');
 
+%MSER Regions on Regular HistEQ of grayscale
+mserRegions = detectMSERFeatures(histImage);
+mserRegionsPixels = vertcat(cell2mat(mserRegions.PixelList));  % extract regions
+figure; imshow(histImage1); title('MSER Regions on Regular HistEQ of gray');
+hold on;
+plot(mserRegions, 'showPixelList', true, 'showEllipses', false);
+plot(mserRegions);
+
+%MSER Regions on Adaptive HistEQ of grayscale
 mserRegions = detectMSERFeatures(histImage2);
 mserRegionsPixels = vertcat(cell2mat(mserRegions.PixelList));  % extract regions
-figure; imshow(histImage); title('MSER Regions');
+figure; imshow(histImage2); title('MSER Regions on Adaptive HistEQ of gray');
+hold on;
+plot(mserRegions, 'showPixelList', true, 'showEllipses', false);
+plot(mserRegions);
+
+
+
+mserRegions = detectMSERFeatures(histImage3);
+mserRegionsPixels = vertcat(cell2mat(mserRegions.PixelList));  % extract regions
+figure; imshow(histImage3); title('MSER Regions on Regular HistEQ of hue');
+hold on;
+plot(mserRegions, 'showPixelList', true, 'showEllipses', false);
+plot(mserRegions);
+
+mserRegions = detectMSERFeatures(histImage4);
+mserRegionsPixels = vertcat(cell2mat(mserRegions.PixelList));  % extract regions
+figure; imshow(histImage4); title('MSER Regions on Adaptive HistEQ of hue');
 hold on;
 plot(mserRegions, 'showPixelList', true, 'showEllipses', false);
 plot(mserRegions);
