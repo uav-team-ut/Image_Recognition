@@ -10,8 +10,8 @@ bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
 matrix = [];
 for i=1:1
-    histImage = adapthisteq(bw);
-    %histImage = hsv(:,:,i);
+    %histImage = adapthisteq(hsv);
+    histImage = hsv(:,:,i);
     %histImage2 = histeq(histImage);
 
     mserRegions = detectMSERFeatures(histImage);
