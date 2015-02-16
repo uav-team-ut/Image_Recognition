@@ -24,6 +24,8 @@ if ~exist(folder, 'dir')
 	mkdir(folder);
 end
 
+Read more: http://www.divilabs.com/2013/11/extracting-saving-of-frames-from-video.html#ixzz3RZuGh5ei
+
 % Step the video reader to extract each frame and then visualize
 i = 0;
 while(i <= 1000) % run for X steps
@@ -33,7 +35,7 @@ while(i <= 1000) % run for X steps
     step(videoPlayerObject,frame);
 	
 	baseFileName = sprintf('%3.3d.png', i);
-	fullFileName = fullfile(folder, baseFileName);
+	fullFileName = fullfile('output', baseFileName);
 	imwrite(frame, fullFileName, 'png');   %saving as 'png' file
 	%indicating the current progress of the file/frame written
 	progIndication = sprintf('Wrote frame %4d.', i);
