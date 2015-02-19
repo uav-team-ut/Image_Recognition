@@ -9,8 +9,8 @@ if isequal(videoSource,'file')
 elseif isequal(videoSource,'camera')
     % import video from camera using the imaq.VideoDevice System Object
     videoReaderObject = imaq.VideoDevice('winvideo'); 
-    videoReaderObject.VideoFormat = 'MJPG_640x480';
-    videoReaderObject.ReturnedDataType = 'uint8';
+    %videoReaderObject.VideoFormat = 'MJPG_640x480';
+    %videoReaderObject.ReturnedDataType = 'uint8';
 end
 
 % Setup video player
@@ -28,7 +28,7 @@ end
 i = 0;
 while(i <= 1000) % run for X steps
     i = i + 1; % update iteration number
-	pause(1); % pause before iterating
+	pause(1); % pause before iterating (number of seconds between frames)
     frame = step(videoReaderObject);
     step(videoPlayerObject,frame);
 	
