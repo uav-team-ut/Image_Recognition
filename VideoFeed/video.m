@@ -35,9 +35,9 @@ while(i <= 1000) % run for X steps
     frame = step(videoReaderObject);
     step(videoPlayerObject,frame);
 	
-	baseFileName = sprintf('%3.3d.png', i);
+	baseFileName = sprintf('%3.3d.jpg', i);
 	fullFileName = fullfile(folder, baseFileName);
-	imwrite(frame, fullFileName, 'png');   %saving as 'png' file
+	imwrite(frame, fullFileName, 'jpg');   %saving as 'jpg' file
 	%indicating the current progress of the file/frame written
 	progIndication = sprintf('Wrote frame %4d.', i);
 	disp(progIndication);
