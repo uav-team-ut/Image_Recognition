@@ -1,4 +1,4 @@
-img = imread('test_images\IMG_2376.jpg');
+img = imread('test_images\test.png');
 minSizeCroppedAreas = 1000;
 
 img = resizeImage(img, minSizeCroppedAreas);
@@ -10,5 +10,5 @@ for i=1:size(boxes)
     crop = imcrop(img, boxes(i,:));
     %show cropped image
     figure; imshow(crop);
-    imwrite(crop, strcat('crop',num2str(i),'.jpg'));
+    %imwrite(crop, strcat('crop',num2str(i),'.jpg'));
 end

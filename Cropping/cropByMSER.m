@@ -5,12 +5,14 @@ function [ matrix ] = cropByMSER( image, threshold )
 %       - image - image matrix, actual matrix
 
 colorImage = image;
+%colorImage = imadjust(colorImage, [.3, .7],[]);
 %resizing done be resizeImage function
 bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
 matrix = [];
 for i=1:1
     %histImage = adapthisteq(hsv);
+    
     histImage = hsv(:,:,i);
     %histImage2 = histeq(histImage);
 
