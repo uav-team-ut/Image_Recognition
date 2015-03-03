@@ -54,8 +54,10 @@ corners = 0;
 for k = 1:length(lines)
     for j = 1:length(lines)
         if(mean(lines(k).point1) ~= 0)
+            
+           %This is completely illogical
             norm1 = norm(lines(k).point1-lines(j).point1)
-            norm2 = norm(lines(k).point2-lines(j).point2)
+            norm2 = sqrt(lines(k).point2-lines(j).point2)
             norm3 = norm([norm1,norm2])
             if (norm3 < 10)
                 corners =corners+1;
