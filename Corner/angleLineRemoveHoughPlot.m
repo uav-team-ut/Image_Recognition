@@ -22,29 +22,18 @@ end
 for k=1:length(lines)
     trigger = 0;
     for j=1:length(lines)
-        diff = zeros(1,4);
-        if lines(k).point1(1) == lines(j).point1(1) && lines(k).point2(1) == lines(j).point2(1)
-            if(lines(k).point1(2) == lines(j).point1(2) && lines(k).point2(2) == lines(j).point2(2))
-                trigger = 1;
-            end 
+       
+        angleDiff = lines(k).rho - lines(j).rho;
+        
+        if(abs(angleDiff) < 50 && angleDiff ~=0)
+                lines(j).point2 = [0,0];
+                lines(j).point1 = [0,0];
+                lines(j).rho = 0;
+                lines(j).theta = 0;
+            
         end
         
-        if(trigger == 0)
-            diff(1) = lines(k).point1(1) - lines(j).point1(1);
-            diff(2) = lines(k).point1(2) - lines(j).point1(2);
-            diff(3) = lines(k).point2(1) - lines(j).point2(1);
-            diff(4) = lines(k).point2(2) - lines(j).point2(2);
-            avg = abs(mean(diff));
-
-            if(avg<=1.25)
-                lines(j).point2(1) = 0;
-                lines(j).point2(2) = 0;
-                lines(j).point1(1) = 0;
-                lines(j).point1(2) = 0;
-            end
-            end
     end
-    
 end
 
 figure, imshow(BW), hold on
