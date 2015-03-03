@@ -3,7 +3,7 @@
 
 %Read Image
 %Note that the current image is already filtered. 
-I  = imread('isreal.png');
+I  = imread('../test_images/triangleEdgeMissing.jpg');
 %Read image is converted to 2dim matrix
 BW = rgb2gray(I);
 
