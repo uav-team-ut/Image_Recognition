@@ -24,11 +24,12 @@ if ~exist(folder, 'dir')
 	mkdir(folder);
 end
 
-% Step the video reader to extract each frame and then visualize
-dirData = dir('output');      %# Get the data for the output directory
-  dirIndex = [dirData.isdir];  %# Find the index for directories
+% Step the video reader to extract each frame and then visualise
+dirData = dir('output');      % Get the data for the output directory
+  dirIndex = [dirData.isdir];  % Find the index for directories
   fileList = {dirData(~dirIndex).name}';  %'# Get a list of the files
 i=length(fileList);
+
 while(i <= 1000) % run for X steps
     i = i + 1; % update iteration number
 	pause(1); % pause before iterating (number of seconds between frames)
