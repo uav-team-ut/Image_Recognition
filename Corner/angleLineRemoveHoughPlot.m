@@ -26,8 +26,8 @@ for k=1:length(lines)
         angleDiff = lines(k).rho - lines(j).rho;
         
         if(abs(angleDiff) < 50 && angleDiff ~=0)
-                lines(j).point2 = [0,0];
-                lines(j).point1 = [0,0];
+                lines(j).point2 = [NaN,NaN];
+                lines(j).point1 = [NaN,NaN];
                 lines(j).rho = 0;
                 lines(j).theta = 0;
             
@@ -53,17 +53,37 @@ end
 corners = 0;
 for k = 1:length(lines)
     for j = 1:length(lines)
-        if(mean(lines(k).point1) ~= 0)
+        tol = 6
+        if(j~=k)
             
-           %This is completely illogical
-            norm1 = norm(lines(k).point1-lines(j).point1)
-            norm2 = sqrt(lines(k).point2-lines(j).point2)
-            norm3 = norm([norm1,norm2])
-            if (norm3 < 10)
-                corners =corners+1;
+                dist = sqrt((lines(k).point1(1)-lines(j).point1(1))^2+(lines(k).point1(1)-lines(j).point1(1))^2)
+            if(dist<=tol && dist ~= 0)
+                corners = corners+1
             end
-           
+                dist = sqrt((lines(k).point2(1)-lines(j).point2(1))^2+(lines(k).point2(1)-lines(j).point2(1))^2)
+            if(dist<tol && dist ~= 0)
+                corners = corners+1
+            end
+                dist = sqrt((lines(k).point1(1)-lines(j).point2(1))^2+(lines(k).point1(1)-lines(j).point2(1))^2)
+            if(dist<tol && dist ~= 0)
+                corners = corners+1
+            end
+                dist = sqrt((lines(k).point2(1)-lines(j).point1(1))^2+(lines(k).point2(1)-lines(j).point1(1))^2)
+            if(dist<tol && dist ~= 0)
+                corners = corners+1
+            end
         end
+%         if(mean(lines(k).point1) ~= 0)
+%             
+%            %This is completely illogical
+%             norm1 = norm(lines(k).point1-lines(j).point1)
+%             norm2 = sqrt(lines(k).point2-lines(j).point2)
+%             norm3 = norm([norm1,norm2])
+%             if (norm3 < 10)
+%                 corners =corners+1;
+%             end
+%            
+%         end
     end
     
 end 
