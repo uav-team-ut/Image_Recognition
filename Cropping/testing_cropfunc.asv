@@ -1,13 +1,23 @@
-img = imread('\test_images\IMG_2376.jpg');
-threshold = 750;
+image = imread('test_images\IMG_2376.jpg');
+% image
+H = fspecial('gaussian');
+img = imfilter(image, H);
+title('Gaussian Blur'); imshow(img); 
+img = imadjust(img,[0.5 0.6],[]);
+minSizeCroppedAreas = 1000;
 
-img = resizeImage(img, threshold);
-boxes = cropByMSER(img, threshold);
-boxes
+img = resizeImage(img, minSizeCroppedAreas);
+boxes = cropByMSER(img, minSizeCroppedAreas);
+% boxes
 
 for i=1:size(boxes)
     %create cropped image
     crop = imcrop(img, boxes(i,:));
+%     crop
     %show cropped image
-    %figure; imshow(crop);
+    %crop = rgb2gray(crop);
+    figure; imshow(crop);
+    %if i == 7 || i == 8 || i == 3
+    %imwrite(crop, strcat('crop',num2str(i+1),'.jpg'));
+    %end
 end
