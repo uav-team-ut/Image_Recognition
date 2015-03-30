@@ -1,5 +1,5 @@
 function scan(img)
-% scan function for shape detection using nueral networks
+% scan function for shape detection using neural networks
 files = dir('images/*.jpg');
 hist = [];
 for n = 1 : length(files)

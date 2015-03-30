@@ -89,10 +89,3 @@ switch corners
     case {6,7}
         fprintf('\nHexagon\n');
 end
-        
-
-
-
-
-
-
