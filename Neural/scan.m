@@ -1,10 +1,12 @@
-function [img,hist,files,net] = scan(img)
+function [img,hist,files,net] = scan(img,shape)
 % scan function for shape detection using neural networks
-files = dir('images/circle/*.jpg');
+directory = strcat('images/',shape,'/*.jpg');
+directory2 = strcat('images/',shape,'/');
+files = dir(directory);
 hist = [];
 for n = 1 : length(files)
     filename = files(n).name;
-    file = imread(['images/' filename]);
+    file = imread([directory2 filename]);
     hist = [hist, imhist(rgb2gray(file))]; 
 end
 
