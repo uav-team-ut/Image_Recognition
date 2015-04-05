@@ -1,5 +1,5 @@
 function [img,hist,files,net] = scan(img,shape)
-% scan function for shape detection using neural networks
+% scan function for shape detection usiclcng neural networks
 directory = strcat('images/',shape,'/*.jpg');
 directory2 = strcat('images/',shape,'/');
 files = dir(directory);
@@ -17,5 +17,5 @@ t   = som(hist); %extract class data
 net = lvqnet(10);
 net = train(net, hist, t);
  
-%%like(img, hist, files, net)
+%like(img, hist, files, net)
 end
