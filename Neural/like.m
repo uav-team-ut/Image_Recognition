@@ -4,11 +4,11 @@ function like(im, hist, files, net, shape)
     cls = vec2ind(net(hs));
  
     [~, n] = size(hist);
-    for i = 1 : n
-        if(cls == vec2ind(net(hist(:, i))))
+    for i = 1 : n,
+        if (cls == vec2ind(net(hist(:, i))))
             figure('name', files(i).name);
             directory = strcat('images/',shape,'/');
-            imshow(imread([directory files(i).name]))
+            imshow(imread([directory files(i).name]));
         end
     end
 end

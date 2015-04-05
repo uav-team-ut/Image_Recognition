@@ -1,5 +1,6 @@
-function [img,hist,files,net] = scan(img,shape)
-% scan function for shape detection usiclcng neural networks
+function [img,hist,files,net] = scan(im, shape)
+img = imread(im);
+% scan function for shape detection using neural networks
 directory = strcat('images/',shape,'/*.jpg');
 directory2 = strcat('images/',shape,'/');
 files = dir(directory);
