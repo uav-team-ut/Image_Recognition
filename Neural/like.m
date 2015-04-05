@@ -1,4 +1,4 @@
-function like(im, hist, files , net,shape)
+function like(im, hist, files, net, shape)
 % like function for shape classification using nueral networks
     hs = imhist(rgb2gray(imresize(im,[50 50])));
     cls = vec2ind(net(hs));

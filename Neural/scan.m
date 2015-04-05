@@ -4,10 +4,10 @@ directory = strcat('images/',shape,'/*.jpg');
 directory2 = strcat('images/',shape,'/');
 files = dir(directory);
 hist = [];
-for n = 1 : length(files)
+for n = 1 : length(files),
     filename = files(n).name;
     file = imread([directory2 filename]);
-    hist = [hist, imhist(rgb2gray(file))]; 
+    hist = [hist, imhist(rgb2gray(file))];
 end
 
 som = selforgmap([10 10]);
@@ -17,5 +17,5 @@ t   = som(hist); %extract class data
 net = lvqnet(10);
 net = train(net, hist, t);
  
-%like(img, hist, files, net)
+like(img, hist, files, net, shape)
 end
