@@ -1,9 +1,9 @@
-%colorImage = imread('test_images\IMG_2376.jpg');
-colorImage = imread('test_images\2014-10-26.jpg');
+colorImage = imread('test_images\IMG_2376.jpg');
+%colorImage = imread('test_images\2014-10-26.jpg');
 %colorImage = imread('test_images\2014-10-26_triangle.jpg');
 arrSize = size(colorImage);
 %arrSize
-threshold = 750;
+threshold = 900;
 if max(arrSize) > threshold
     rSize = threshold / (max(arrSize));
     %rSize
@@ -13,11 +13,11 @@ origImage = colorImage;
 figure; imshow(colorImage); title('Image');
 bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
-figure; imshow(bw); title('bw');
-figure;imshow(hsv);title('hsv');
-for i=1:1
+%figure; imshow(bw); title('bw');
+%figure;imshow(hsv);title('hsv');
+for i=1:3
     histImage = hsv(:,:,i);
-    histImage2 = histeq(histImage);
+    %histImage2 = histeq(histImage);
     %histImage3 = histeq(rgb2hsv(origImage));
 
     %figure;imshow(histImage);

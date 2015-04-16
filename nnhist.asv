@@ -1,0 +1,32 @@
+cellcolors = ['green '; 'black '; 'blue  '; 'orange'; 'purple'; 'red   '; 'yellow'];
+colors = cellstr(cellcolors);
+cellshapes = ['circle  '; 'triangle'];
+shapes = cellstr(cellshapes);
+%colors = cell(colors)
+%shapes = cell(shapes);
+
+%change with your abs path
+%currently can't find way to use relative path with imread
+myPath = '';
+
+file = '';
+directory = '';
+for i=1:size(shapes)
+    for j=1:size(colors)
+        file = strcat(colors{j}, '_', shapes{i});
+        file
+        directory = strcat('/ShapeDatabase/',file,'.jpg');
+        %directory2 = strcat('images/',shape,'/');
+        img = imread(directory);
+        currHist = imhist(rgb2gray(img));
+        figure; plot(currHist); title(strcat('Hist ', strcat(i * size(shapes) + j)));
+        hist = [hist, currHist];
+    end
+end
+% files = dir(directory);
+% hist = [];
+% for n = 1 : length(files),
+%     filename = files(n).name;
+%     file = imread([directory2 filename]);
+%     hist = [hist, imhist(rgb2gray(file))];
+% end 
