@@ -45,7 +45,7 @@ shapes = cellstr(cellshapes);
 img1 = imread('AutoShapes\images\crop1.jpg');
 hist = imhist(rgb2gray(img1));
 [h,s,v] = rgb2hsv(img1);
-a = hsv(:,:,1);
+%a = hsv(:,:,1);
 currHueHist = imhist(h);
 figure; plot(currHueHist);
 [peak,ind] = findpeaks(currHueHist);
