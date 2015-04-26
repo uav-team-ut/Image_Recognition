@@ -20,6 +20,6 @@ elseif h >= 170 && h < 265
 elseif h >= 265 && h < 330
     color = 'purple';
 else 
-    color = 'cannot be determined'
+    color = 'cannot be determined';
 end
 end
