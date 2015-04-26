@@ -18,6 +18,9 @@ for i=1:size(boxes)
     %show cropped image
     %crop = rgb2gray(crop);
     figure; imshow(crop);
+    if i == 17
+        imwrite(crop, strcat('crop',num2str(i+1),'.jpg'));
+    end
     %if i == 7 || i == 8 || i == 3
     %imwrite(crop, strcat('crop',num2str(i+1),'.jpg'));
     %end

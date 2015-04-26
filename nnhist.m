@@ -42,7 +42,7 @@ shapes = cellstr(cellshapes);
 %     end
 % end
 
-img1 = imread('AutoShapes\images\crop1.jpg');
+img1 = imread('AutoRunner\images\crop1.jpg');
 hist = imhist(rgb2gray(img1));
 [h,s,v] = rgb2hsv(img1);
 %a = hsv(:,:,1);
