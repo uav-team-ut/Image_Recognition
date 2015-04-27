@@ -53,7 +53,7 @@ end
 corners = 0;
 for k = 1:length(lines)
     for j = 1:length(lines)
-        tol = 6
+        tol = 5
         if(j~=k)
             
                 dist = sqrt((lines(k).point1(1)-lines(j).point1(1))^2+(lines(k).point1(1)-lines(j).point1(1))^2)
