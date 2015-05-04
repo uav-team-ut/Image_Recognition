@@ -11,7 +11,7 @@ BW = rgb2gray(I);
 %rho
 [H,T,R] = hough(BW);
 % Hough peaks are found
-P  = houghpeaks(H,10);
+P  = houghpeaks(H,50);
 %hough image is plotted. Now idea what it means, but it looks cool
 imshow(H,[],'XData',T,'YData',R,'InitialMagnification','fit');
 xlabel('\theta'), ylabel('\rho');

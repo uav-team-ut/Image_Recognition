@@ -36,7 +36,7 @@ for k=1:length(lines)
             diff(4) = lines(k).point2(2) - lines(j).point2(2);
             avg = abs(mean(diff));
 
-            if(avg<=1.25)
+            if(avg<=11)
                 lines(j).point2(1) = 0;
                 lines(j).point2(2) = 0;
                 lines(j).point1(1) = 0;
@@ -65,10 +65,10 @@ corners = 0;
 for k = 1:length(lines)
     for j = 1:length(lines)
         if(mean(lines(k).point1) ~= 0)
-            norm1 = norm(lines(k).point1-lines(j).point1)
-            norm2 = norm(lines(k).point2-lines(j).point2)
-            norm3 = norm([norm1,norm2])
-            if (norm3 < 10)
+            norm1 = norm(lines(k).point1-lines(j).point1);
+            norm2 = norm(lines(k).point2-lines(j).point2);
+            norm3 = norm([norm1,norm2]);
+            if (norm3 < 1)
                 corners =corners+1;
             end
            

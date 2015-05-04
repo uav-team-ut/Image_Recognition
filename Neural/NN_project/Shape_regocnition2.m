@@ -74,7 +74,7 @@ for h=1:3 % 3 boucles pour 3 images de simulation
                      for j=(((Num_Row/Num_Inputs)*(i-1))+1) : ((Num_Row/Num_Inputs)*(i))
                           for k=1 : Num_column
                              if Img(j,k)==0
-                             S(i,h)=S(i,h)+k ;
+                                S(i,h)=S(i,h)+k ;
                              end
                            end
                      end
