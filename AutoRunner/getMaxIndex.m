@@ -12,31 +12,27 @@ hist_out = imhist(matrix, bins);
 %disp(num2str(sort(end, 2)));
 %maxIndex = sort(end, 2);
 
+%get peaks from findpeaks
 [peak, ind] = findpeaks(hist_out);
 array = [peak,ind];
+
+%findpeaks doesn't get the first or last element of an array so we manually
+%add them
+%first index
 index1 = [hist_out(1), 1];
-%lastArray = [lastSize, lastInd]
+%last index
 index2 = [hist_out(bins), bins];
+
+%add to findpeaks results
 array = [array; index1];
 array = [array; index2];
+
+%sorts results
 sort = sortrows(array, 1);
+
+%returns top two indices
 maxIndex = sort(end, 2);
 maxIndex2 = sort(end-1, 2);
-
-% maxSize = 0;
-% maxIndex = 0;
-% %maxSize2 = 0;
-% maxIndex2 = 0;
-% 
-% for i=1:size(hist_out)
-%         if (hist_out(i) > maxSize)
-%            maxSize = hist_out(i);
-%            maxIndex = i;
-%         end
-% end
-%disp(num2str(maxIndex)+ ' ' + num2str(maxIndex2));
-
-
 
 end
 
