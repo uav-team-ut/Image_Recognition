@@ -3,7 +3,7 @@ function [ maxIndex, maxIndex2 ] = getMaxIndex( matrix, bins )
 %   Detailed explanation goes here
 
 hist_out = imhist(matrix, bins);
-%figure; plot(hist_out);
+figure; plot(hist_out);
 
 %doesn't work, findpeaks doesn't get peak if it's at 0 or end index
 %[peak, ind] = findpeaks(hist);
@@ -15,8 +15,8 @@ hist_out = imhist(matrix, bins);
 [peak, ind] = findpeaks(hist_out);
 array = [peak,ind];
 index1 = [hist_out(1), 1];
-%lastArray = [lastSize, lastInd]
-index2 = [hist_out(bins), bins];
+lastInd
+index2 = [hist_out(100), 100];
 array = [array; index1];
 array = [array; index2];
 sort = sortrows(array, 1);

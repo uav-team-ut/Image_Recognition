@@ -18,7 +18,7 @@ v = im_hsv(:,:,3);
 % sortHue = sortrows(hueArray, 1);
 
 [maxHue1,maxHue2] = getMaxIndex(h, 360);
-%disp(num2str(maxHue1) + ' ' + num2str(maxHue2));
+disp(num2str(maxHue1,
 maxSat = getMaxIndex(s, 100);
 maxVal = getMaxIndex(v, 100);
 

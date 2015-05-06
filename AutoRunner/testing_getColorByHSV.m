@@ -1,3 +1,7 @@
-img = imread('images\crop2.jpg');
+%clear; close all; clc
+img = imread('images\crop18.jpg');
 figure; imshow(img);
-disp(getColorByHSV(img));
+[firstColor, secondColor] = getColorByHSV(img);
+disp(firstColor);
+disp(secondColor);
+%disp(firstColor + ' ' + secondColor);
