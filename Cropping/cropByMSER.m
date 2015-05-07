@@ -13,7 +13,7 @@ bw = rgb2gray(colorImage);
 hsv = rgb2hsv(colorImage);
 
 matrix = [];
-for i=1:1
+for i=1:3
     %histImage = adapthisteq(hsv);
     
     histImage = hsv(:,:,i);
