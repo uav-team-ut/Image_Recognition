@@ -1,4 +1,4 @@
-image = imread('test_images\IMG_2376.jpg');
+image = imread('test_images/IMG_2376.jpg');
 % image
 %figure;imshow(image);
 H = fspecial('gaussian');

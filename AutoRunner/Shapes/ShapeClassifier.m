@@ -1,4 +1,4 @@
-function ShapeClassifier( img_orig, img_in )
+function ShapeClassifier( img_orig, img_in, img_number )
 %SHAPECLASSIFIER Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -16,7 +16,10 @@ function ShapeClassifier( img_orig, img_in )
 	% Display it.
 	subplot(2, 2, 1);
 	imshow(img_orig, []);
-	title('Input Image', 'FontSize', fontSize);
+    input_title = sprintf('Input Image %d', img_number);
+    noisy_title = sprintf('Initial (Noisy) Binary Image %d', img_number);
+    clean_title = sprintf('Cleaned Binary Image %d', img_number);
+	title(input_title, 'FontSize', fontSize);
 	% Enlarge figure to full screen.
 	set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
 	% Give a name to the title bar.
@@ -39,13 +42,13 @@ function ShapeClassifier( img_orig, img_in )
 	% Display it.
 	subplot(2, 2, 2);
 	imshow(binaryImage);
-	title('Initial (Noisy) Binary Image', 'FontSize', fontSize);
+	title(noisy_title, 'FontSize', fontSize);
 	% Remove small objects.
 	binaryImage = bwareaopen(binaryImage, 50);
 	% Display it.
 	subplot(2, 2, 4);
 	imshow(binaryImage, []);
-	title('Cleaned Binary Image', 'FontSize', fontSize);
+	title(clean_title, 'FontSize', fontSize);
 	[labeledImage, numberOfObjects] = bwlabel(binaryImage);
 	blobMeasurements = regionprops(labeledImage,...
 		'Perimeter', 'Area', 'FilledArea', 'Solidity', 'Centroid'); 
@@ -111,6 +114,7 @@ function ShapeClassifier( img_orig, img_in )
 				blobNumber, shape, circularities(blobNumber), solidities(blobNumber));
 			text(blobMeasurements(blobNumber).Centroid(1), blobMeasurements(blobNumber).Centroid(2), ...
 				overlayMessage, 'Color', 'r');
+            shape
 		end
 	% 	button = questdlg(message, 'Continue', 'Continue', 'Cancel', 'Continue');
 	% 	if strcmp(button, 'Cancel')
