@@ -1,12 +1,15 @@
- img_test = imread('images/test/bad3.jpg');
+ img_test = imread('images/test/bad.jpg');
  img = img_test;
- filter = .4;
+ filter = .7;
  RGB2 = imadjust(img, [.1 .1 .1; .6 .6 .6]);
-
+se = strel('square',5);
 gray = rgb2gray(img);
-gray = wiener2(gray,[5 5]);
+% gray = wiener2(gray,[5 5]);
 a_gray = imadjust(gray);
 thisImage = edge(a_gray, 'Canny', filter);
+thisImage = imdilate(thisImage,se);
+%thisImage = imclose(thisImage, se);
+thisImage = bwmorph(thisImage, 'thin', Inf);
 % thisImage = imfill(thisImage, 'holes');
 % thisImage = ExtractNLargestBlobs(thisImage, 3);
 imshow(thisImage);

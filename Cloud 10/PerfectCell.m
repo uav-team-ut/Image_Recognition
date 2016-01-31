@@ -36,28 +36,27 @@ close all;
 
 % IMAGE SELECTION
 
- img_many = imread('images/test/canny1.jpg');
- img_bad = imread('images/test/bad7.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+  img_bad = imread('images/test/bad.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
 % img_test = imread('images/test/test.jpg');
-% img_square = imread('images/test/square5.jpg');
+% img_square = imread('images/test/square4.jpg');
 % img_rectangle = imread('images/test/rectangle3.jpg');
 % img_barelyRectangle = imread('images/test/barelyRectangle.jpg');
 % img_star = imread('images/test/star5.jpg');
-% img_cross = imread('images/test/cross4.jpg');
+% img_cross = imread('images/test/cross3.jpg');
 % img_trap = imread('images/test/trap.png');
-% img_nothing = imread('images/test/nothing3.jpg');
- img_DBZ = imread('images/test/DBZ.png');
+% img_nothing = imread('images/test/nothing2.jpg');
+% img_DBZ = imread('images/test/DBZ.png');
 % img_potato = imread('images/test/potato.jpg');
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
 % img_semi = imread('images/test/semi.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
-% img_quart = imread('images/test/quart19.jpg');
- img_tringle = imread('images/test/tringle4.jpg');
+% img_quart = imread('images/test/quart4.jpg');
+% img_tringle = imread('images/test/tringle14.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
 
-% ******* Change the img assignment to debug with another image *********
+% ******* Change the img assignment to debug with another image ********
 
 img = img_bad;
 % ******* Select Appropriate Mode *******
@@ -76,8 +75,8 @@ thisImage = edge(a_gray, 'canny', filter);
 % Fill small holes/discontinuities and thin blobs
 se5 = strel('square', 5);
 se2 = strel('square', 2);
-% thisImage = imdilate(thisImage,se2);
-% thisImage = bwmorph(thisImage, 'thin', Inf);
+% thisImageFilled = imdilate(thisImage,se2);
+% thisImageFilled = bwmorph(thisImageFilled, 'thin', Inf);
 
 if mode
     subplot(2,2,3);
@@ -87,6 +86,7 @@ end
 
 % GLOBAL INITIALIZATIONS
 
+counter = 0;
 repeat = 1;
 tryToFlip = 0;
 tryToRotate = 0;
@@ -100,118 +100,84 @@ nothing = 0;
 
 % GLOBAL ERROR HANDLE; catches all exceptions (including no shape/ no white pixels)
 
-% try
-    
-    % ITERATIVE NOISE FILTER; loops until a shape is found or filter hits limit
-    
-    while  repeat && filter >=  .30
-        
-        blobs = regionprops(thisImage, 'BoundingBox');
+try
 
-        if length(blobs) > 10
-            thisImage = imdilate(thisImage,se5);
-            thisImage = bwmorph(thisImage, 'thin', Inf);
-        end
-        
-        % Caps the filtered image to max 20 blobs
-        noiseLVL = 1;
-        while length(blobs) > 20;
-            thisImage = bwareaopen(thisImage, 50*noiseLVL);
-            noiseLVL = noiseLVL + 1;
-            blobs = regionprops(thisImage, 'BoundingBox');
-        end
-        
-       blobAreas = regionprops(thisImage, 'area');
-       order = [blobAreas.Area];
-       [~,idx]=sort(order, 'descend');
-       blobs=blobs(idx);
-        
-        if mode
-            subplot(2,2,4);
-            imshow(thisImage);
-            axis on;
-            title('After Pre-Processing');
-            subplot(2,2,2);
-        end
-        
-        if isempty(blobs)
-            nothing = 1;
-            error('Empty');
-        end
-        
-        z = 1;
-        % LOOPING THROUGH BLOBS
-        while z <= length(blobs)
-            % Flips are for acute-angle-oriented shapes
-            if tryToFlip == 1 && flipped == 0
-                thisBlob = fliplr(thisBlob);
-                tryToFlip = 0;
-                flipped = 1;
-                % Rotations are for flat (or almost flat) shapes
-            elseif tryToRotate == 1 && rotated == 0
-                thisBlob = imrotate(thisBlob, 3);
-                thisBlob = bwmorph(thisBlob, 'thin', Inf);
-                tryToRotate = 0;
-                rotated = 1;
-                if mode
-                    cla(subplot(2,2,2));
-                end
-                % Shears are for some acute-angled tringles
-            elseif tryToShear == 1 && sheared == 0
-                tform = affine2d([1 0 0; .5 1 0; 0 0 1]);
-                if strcmp(shape, 'Riven')
-                    tform = invert(tform);
-                end
-                thisBlob = imwarp(thisBlob, tform);
-                tryToShear = 0;
-                sheared = 1;
-                if mode
-                    cla(subplot(2,2,2));
-                end
-                % Else go to next blob
-            else
-                boundary = blobs(z).BoundingBox;
-                % Crop it out of the original gray scale image.
-                thisBlob = imcrop(thisImage, boundary);
-                
-                numberOfWhite = sum(thisBlob(:));
-                
-                % If image is too small, skip to next blob
-                if numberOfWhite < 75
-                    tryToFlip = 0;
-                    tryToRotate = 0;
-                    tryToShear = 0;
-                    flipped = 0;
-                    rotated = 0;
-                    sheared = 0;
-                    crossConfirm = 0;
-                    nothing = 0;
-                    z = z+1;
-                    continue
-                end
-                
-                % STANDARDIZING SCALE/SIZE OF THE BLOB
-                thisBlob = imdilate(thisBlob,se2);
-                thisBlob = imresize(thisBlob, [300 300], 'Method', 'bicubic') ;
-                thisBlob = bwmorph(thisBlob, 'thin', Inf);
-                thisBlob = bwareaopen(thisBlob, 50);
-            end
-            
-            %DISPLAY BLOB APPROXIMATIONS
+% ITERATIVE NOISE FILTER; loops until a shape is found or filter hits limit
+
+while  repeat && filter >=  .30
+    
+    %thisImageThick is used to determine the boundary of a blob after dilating to fill holes (not displayed though)
+    thisImageThick = imdilate(thisImage,se5);
+    
+    blobs = regionprops(thisImageThick, 'BoundingBox');
+    
+    % Caps the filtered image to max 20 blobs
+    noiseLVL = 1;
+    
+    while length(blobs) > 20;
+        thisImageThick = bwareaopen(thisImageThick, 200*noiseLVL);
+        noiseLVL = noiseLVL + 1;
+        blobs = regionprops(thisImageThick, 'BoundingBox');
+        counter = counter + 1;
+    end
+    
+%     blobAreas = regionprops(thisImage, 'area');
+%     order = [blobAreas.Area];
+%     [~,idx]=sort(order, 'descend');
+%     blobs=blobs(idx);
+    
+    if mode
+        subplot(2,2,4);
+        imshow(thisImage);
+        axis on;
+        title('After Pre-Processing');
+        subplot(2,2,2);
+    end
+    
+    if isempty(blobs)
+        nothing = 1;
+        error('Empty');
+    end
+    
+    z = 1;
+    % LOOPING THROUGH BLOBS
+    while z <= length(blobs)
+        % Flips are for acute-angle-oriented shapes
+        if tryToFlip == 1 && flipped == 0
+            thisBlob = fliplr(thisBlob);
+            tryToFlip = 0;
+            flipped = 1;
+            % Rotations are for flat (or almost flat) shapes
+        elseif tryToRotate == 1 && rotated == 0
+            thisBlob = imrotate(thisBlob, 3);
+            thisBlob = bwmorph(thisBlob, 'thin', Inf);
+            tryToRotate = 0;
+            rotated = 1;
             if mode
-                imshow(thisBlob);
-                hold on; axis on;
-                title('Blob Approximations');
+                cla(subplot(2,2,2));
             end
+            % Shears are for some acute-angled tringles
+        elseif tryToShear == 1 && sheared == 0
+            tform = affine2d([1 0 0; .5 1 0; 0 0 1]);
+            if strcmp(shape, 'Riven')
+                tform = invert(tform);
+            end
+            thisBlob = imwarp(thisBlob, tform);
+            tryToShear = 0;
+            sheared = 1;
+            if mode
+                cla(subplot(2,2,2));
+            end
+            % Else go to next blob
+        else
+            boundary = blobs(z).BoundingBox;
+            % Crop it out of the original gray scale image.
+            thisBlob = imcrop(thisImage, boundary);
             
-            xyIndex = 1;
+            numberOfWhite = sum(thisBlob(:));
             
-            % CREATE THE ROW/COL ARRAYS WHERE THE IMAGE IS WHITE (1)
-            [yArray, xArray] =   find (thisBlob==1);
-            
-            total = length(yArray);
-            
-            if total == 0
+            % If image is too small, skip to next blob
+            if numberOfWhite < 75
                 tryToFlip = 0;
                 tryToRotate = 0;
                 tryToShear = 0;
@@ -224,165 +190,197 @@ nothing = 0;
                 continue
             end
             
-            % LOCAL/BLOB INITIALIZATIONS
-            
-            index = zeros([500 1]);
-            cornersArray = [];
-            prevEnd = 1;
-            i = 1;
-            j = 1;
-            
-            % DETERMINES WHICH DIRECTION OF TRAVERSAL (UP/DOWN) SHOULD BE FIRST
-            yolo = 0;
-            
-            if total >= 50
-                goUntil = 50;
-            else
-                goUntil = total;
-            end
-            
-            for k = 2:goUntil
-                yolo = yolo + yArray(k);
-            end
-            
-            if ( yolo/(goUntil-1) < yArray(1) )
-                start = 1;                      %GO UP FIRST
-                firstDirection = 'up';
-            else
-                start = 0;                      %GO DOWN FIRST
-                firstDirection = 'down';
-            end
-            
-            traversal = 0;
-            % CHANGING TRAVERSAL
-            for a = 1:2
-                % CHANGING DIRECTION
-                for b = start:start+1
-                    keepGoing = 1;
-                    % FINDING NEIGHBORS ALONG A DIRECTION
-                    while keepGoing
-                        
-                        [n_xyIndex, keepGoing] = supNeighbor( yArray(), xArray(), xyIndex, b );
-                        
-                        index(i) = xyIndex;
-                        
-                        % PATH TO NEIGHBOR (RED)
-                        if mode
-                            line ([xArray(xyIndex), xArray(n_xyIndex)], [yArray(xyIndex), yArray(n_xyIndex)],'Color','r','LineWidth',2);
-                        end
-                        xyIndex = n_xyIndex;
-                        i= i+1;
-                        j= j+1;
-                        if j == 3
-                            prevEnd = xyIndex;
-                        end
-                    end
-                    
-                    % LINEAR SIDE APPROXIMATION (BLUE)
-                    if i > 3 && prevEnd > 0
-                        deltax = xArray(prevEnd) - xArray(index(i-3));
-                        deltay = yArray(prevEnd) - yArray(index(i-3));
-                        distance = sqrt(deltax^2 + deltay^2);
-                    end
-                    
-                    if j >= 10 && distance > 25
-                        if mode
-                            line ([xArray(prevEnd), xArray(index(i-3))], [yArray(prevEnd), yArray(index(i-3))],'Color','b','LineWidth',4);
-                        end
-                        %Ignore this warning(this matrix is at most a 4x2)
-                        cornersArray = vertcat(cornersArray,[prevEnd, index(i-3)]);
-                        if a == 1
-                            traversal = traversal + 1;
-                        end
-                    end
-                    j = 1;
-                end
-                
-                % REVERSING TRAVERSAL DIRECTION (AFTER FIRST ITERATION)
-                if start == 1
-                    start = 0;
-                else
-                    start = 1;
-                end
-                
-                prevEnd = 1;
-                j = 1;
-                
-                if index(3) == 0
-                    break;
-                end
-                
-                [xyIndex] = mimicShadow( xArray, yArray, xArray(index(3)), yArray(index(3)));
-                
-                if xyIndex == 0
-                    break;
-                end
-            end
-            
-            % SHAPE RETRIEVAL
-            [shape, xcenter, ycenter] = discriminate( cornersArray, xArray, yArray, index, traversal );
-            
-            % CHECK IF BLOB NEEDS TO BE FLIPPED AND RERUN
-            if strcmp(shape, 'KAMEHAMEHA') && flipped == 0
-                tryToFlip = 1;
-                continue
-            elseif strcmp(shape, 'Cross') && crossConfirm == 0
-                crossConfirm = 1;
-                tryToFlip = 1;
-                continue
-                % CHECK IF BLOB NEEDS TO BE ROTATED AND RERUN
-            elseif strcmp(shape, '5/7')  && rotated == 0
-                tryToRotate = 1;
-                continue
-                % CHECK IF BLOB NEEDS TO BE SHEARED AND RERUN
-            elseif (strcmp(shape, 'Lee') || strcmp(shape, 'Riven'))  && sheared == 0
-                tryToShear = 1;
-                continue
-                % CHECK IF IMAGE IS AN ALLOWED SHAPE
-            elseif ~strcmp(shape, 'Unknown') && ~strcmp(shape, 'KAMEHAMEHA') && ~strcmp(shape, '5/7') && ~strcmp(shape, 'Lee') && ~strcmp(shape, 'Riven')
-                repeat = 0;
-                %REINITIALIZE IF SHAPE IS INVALID AND GO TO NEXT BLOB
-            else
-                tryToFlip = 0;
-                tryToRotate = 0;
-                tryToShear = 0;
-                flipped = 0;
-                rotated = 0;
-                sheared = 0;
-                crossConfirm = 0;
-                nothing = 0;
-            end
-            % IF SHAPE IS DETECTED, LEAVE LOOP
-            if repeat == 0
-                break
-            end
-            z = z + 1;
+            % STANDARDIZING SCALE/SIZE OF THE BLOB
+            thisBlob = imdilate(thisBlob,se2);
+            thisBlob = imresize(thisBlob, [300 NaN], 'Method', 'bicubic') ;
+            thisBlob = bwmorph(thisBlob, 'thin', Inf);
         end
         
+        %DISPLAY BLOB APPROXIMATIONS
+        if mode
+            cla(subplot(2,2,2));
+            imshow(thisBlob);
+            hold on; axis tight; axis on;
+            title('Blob Approximations');
+        end
+        
+        xyIndex = 1;
+        
+        % CREATE THE ROW/COL ARRAYS WHERE THE IMAGE IS WHITE (1)
+        [yArray, xArray] =   find (thisBlob==1);
+        
+        total = length(yArray);
+        
+        if total == 0
+            tryToFlip = 0;
+            tryToRotate = 0;
+            tryToShear = 0;
+            flipped = 0;
+            rotated = 0;
+            sheared = 0;
+            crossConfirm = 0;
+            nothing = 0;
+            z = z+1;
+            continue
+        end
+        
+        % LOCAL/BLOB INITIALIZATIONS
+        
+        index = zeros([500 1]);
+        cornersArray = [];
+        prevEnd = 1;
+        i = 1;
+        j = 1;
+        
+        % DETERMINES WHICH DIRECTION OF TRAVERSAL (UP/DOWN) SHOULD BE FIRST
+        yolo = 0;
+        
+        if total >= 50
+            goUntil = 50;
+        else
+            goUntil = total;
+        end
+        
+        for k = 2:goUntil
+            yolo = yolo + yArray(k);
+        end
+        
+        if ( yolo/(goUntil-1) < yArray(1) )
+            start = 1;                      %GO UP FIRST
+            firstDirection = 'up';
+        else
+            start = 0;                      %GO DOWN FIRST
+            firstDirection = 'down';
+        end
+        
+        traversal = 0;
+        % CHANGING TRAVERSAL
+        for a = 1:2
+            % CHANGING DIRECTION
+            for b = start:start+1
+                keepGoing = 1;
+                % FINDING NEIGHBORS ALONG A DIRECTION
+                while keepGoing
+                    
+                    [n_xyIndex, keepGoing] = supNeighbor( yArray(), xArray(), xyIndex, b );
+                    
+                    index(i) = xyIndex;
+                    
+                    % PATH TO NEIGHBOR (RED)
+                    if mode
+                        line ([xArray(xyIndex), xArray(n_xyIndex)], [yArray(xyIndex), yArray(n_xyIndex)],'Color','r','LineWidth',2);
+                    end
+                    xyIndex = n_xyIndex;
+                    i= i+1;
+                    j= j+1;
+                    if j == 3
+                        prevEnd = xyIndex;
+                    end
+                end
+                
+                % LINEAR SIDE APPROXIMATION (BLUE)
+                if i > 3 && prevEnd > 0
+                    deltax = xArray(prevEnd) - xArray(index(i-3));
+                    deltay = yArray(prevEnd) - yArray(index(i-3));
+                    distance = sqrt(deltax^2 + deltay^2);
+                end
+                
+                if j >= 10 && distance > 25
+                    if mode
+                        line ([xArray(prevEnd), xArray(index(i-3))], [yArray(prevEnd), yArray(index(i-3))],'Color','b','LineWidth',4);
+                    end
+                    %Ignore this warning(this matrix is at most a 4x2)
+                    cornersArray = vertcat(cornersArray,[prevEnd, index(i-3)]);
+                    if a == 1
+                        traversal = traversal + 1;
+                    end
+                end
+                j = 1;
+            end
+            
+            % REVERSING TRAVERSAL DIRECTION (AFTER FIRST ITERATION)
+            if start == 1
+                start = 0;
+            else
+                start = 1;
+            end
+            
+            prevEnd = 1;
+            j = 1;
+            
+            if index(3) == 0
+                break;
+            end
+            
+            [xyIndex] = mimicShadow( xArray, yArray, xArray(index(3)), yArray(index(3)));
+            
+            if xyIndex == 0
+                break;
+            end
+        end
+        
+        % SHAPE RETRIEVAL
+        [shape, xcenter, ycenter] = discriminate( cornersArray, xArray, yArray, index, traversal );
+        
+        % CHECK IF BLOB NEEDS TO BE FLIPPED AND RERUN
+        if strcmp(shape, 'KAMEHAMEHA') && flipped == 0
+            tryToFlip = 1;
+            continue
+        elseif strcmp(shape, 'Cross') && crossConfirm == 0
+            crossConfirm = 1;
+            tryToFlip = 1;
+            continue
+            % CHECK IF BLOB NEEDS TO BE ROTATED AND RERUN
+        elseif strcmp(shape, '5/7')  && rotated == 0
+            tryToRotate = 1;
+            continue
+            % CHECK IF BLOB NEEDS TO BE SHEARED AND RERUN
+        elseif (strcmp(shape, 'Lee') || strcmp(shape, 'Riven'))  && sheared == 0
+            tryToShear = 1;
+            continue
+            % CHECK IF IMAGE IS AN ALLOWED SHAPE
+        elseif ~strcmp(shape, 'Unknown') && ~strcmp(shape, 'KAMEHAMEHA') && ~strcmp(shape, '5/7') && ~strcmp(shape, 'Lee') && ~strcmp(shape, 'Riven')
+            repeat = 0;
+            %REINITIALIZE IF SHAPE IS INVALID AND GO TO NEXT BLOB
+        else
+            tryToFlip = 0;
+            tryToRotate = 0;
+            tryToShear = 0;
+            flipped = 0;
+            rotated = 0;
+            sheared = 0;
+            crossConfirm = 0;
+            nothing = 0;
+        end
         % IF SHAPE IS DETECTED, LEAVE LOOP
         if repeat == 0
             break
         end
-        
-        % INCREMENT AND PROCESS NOISE FILTER
-        if ~tryToFlip && ~tryToRotate && ~tryToShear
-            prevImage = thisImage;
-            
-            filter = filter - .10;
-            thisImage = edge(a_gray, 'canny', filter);
-            
-            
-        end
+        z = z + 1;
     end
     
-% catch
-%     % CATHES EMPTY IMAGES
-%     if nothing == 1
-%         shape = 'Empty';
-%     else
-%         shape = 'Something went wrong =/';
-%     end
-% end
+    % IF SHAPE IS DETECTED, LEAVE LOOP
+    if repeat == 0
+        break
+    end
+    
+    % INCREMENT AND PROCESS NOISE FILTER
+    if ~tryToFlip && ~tryToRotate && ~tryToShear
+        prevImage = thisImage;
+        
+        filter = filter - .10;
+        thisImage = edge(a_gray, 'canny', filter);       
+    end
+end
+
+catch
+    % CATHES EMPTY IMAGES
+    if nothing == 1
+        shape = 'Empty';
+    else
+        shape = 'Something went wrong =/';
+    end
+end
 
 % PLACE CENTER OF ALL NEIGHBORS
 

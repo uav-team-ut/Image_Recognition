@@ -10,7 +10,7 @@ end
 
 limit = length(yArray);
 
-last = max(xArray);
+% last = max(xArray);
 
 y1 = yArray(index);
 x1 = xArray(index);
@@ -54,7 +54,7 @@ while count <= 15
             
             n_index = n_index + 1;
             
-            if n_index - index > 200 || n_index > limit || xArray(n_index) == last;
+            if n_index - index > 200 || n_index > limit ; %|| xArray(n_index) == last
                 keepGoing = 0;
                 n_index = index;
                 return;

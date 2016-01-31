@@ -7,6 +7,7 @@ xcenter = 0;
 ycenter = 0;
 
 fitScale = 20;
+shitScale = 35;
 
 [realsize,~] = size(corners);
 
@@ -106,12 +107,22 @@ for a = 1:realsize
         end
     end
     
+    for q = 1:3
+        xmid = ( ( x(corners(a,2)) ) - x(corners(a,1)) ) * q/4;
+        ymid = ( ( y(corners(a,2)) ) - y(corners(a,1)) ) * q/4;
+        
+        xmid = x(corners(a,1)) + xmid;
+        ymid = y(corners(a,1)) + ymid;
+        
+        neighborFit(q) = notAlone( xmid , ymid , xEdges, yEdges, shitScale );
+    end
+    
     if (sum(neighborFit) == 2 && neighborFit(2)) || (sum(neighborFit) == 3 && length(a) <= 70)
         goodFit = goodFit + 1;
     end
 end
 
-if realsize == 2 && notAlone( 150 , 150 , x, y, fitScale ) && notAlone( 50 , 250 , x, y, fitScale ) && notAlone( 250 , 50 , x, y, fitScale ) && length(1) > 300
+if realsize == 2 && notAlone( 150 , 150 , x, y, fitScale ) && ((notAlone( 50 , 250 , x, y, fitScale ) && notAlone( 250 , 50 , x, y, fitScale )) || (notAlone( 50 , 50 , x, y, fitScale ) && notAlone( 250 , 250 , x, y, fitScale ))) && length(1) > 300
     if y(corners(1,2)) - y(corners(1,1)) < 0;
         string = 'Lee';
         return
@@ -190,6 +201,8 @@ if realsize == 3
     
 end
 
+
+
 % 1-2 Traversal
 if traversal == 1
     
@@ -258,6 +271,7 @@ elseif traversal == 2 && realsize == 3
     
 else
     
+    quartPerp = 0;
     %4 sided shapes
     
     if abs(sideSlopes(1) - sideSlopes(4)) < max(abs(sideSlopes(1)),abs(sideSlopes(4)))*.420
@@ -270,18 +284,30 @@ else
     
     if abs(-1/sideSlopes(1) - sideSlopes(2)) < max(abs(-1/sideSlopes(1)),abs(sideSlopes(2)))*.420
         perp = perp + 1;
+        if length(1) > 150 && length(2) > 150
+            quartPerp = 1;
+        end
     end
     
     if abs(-1/sideSlopes(2) - sideSlopes(4)) < max(abs(-1/sideSlopes(2)),abs(sideSlopes(4)))*.420
         perp = perp + 1;
+        if length(2) > 150 && length(4) > 150
+            quartPerp = 1;
+        end
     end
     
-    if abs(-1/sideSlopes(4) - sideSlopes(3)) < max(abs(-1/sideSlopes(4)),abs(sideSlopes(3)))*.450
+    if abs(-1/sideSlopes(4) - sideSlopes(3)) < max(abs(-1/sideSlopes(4)),abs(sideSlopes(3)))*.420
         perp = perp + 1;
+        if length(4) > 150 && length(3) > 150
+            quartPerp = 1;
+        end
     end
     
     if abs(-1/sideSlopes(3) - sideSlopes(1)) < max(abs(-1/sideSlopes(3)),abs(sideSlopes(1)))*.420
         perp = perp + 1;
+        if length(3) > 150 && length(1) > 150
+            quartPerp = 1;
+        end
     end
     
     if par == 2
@@ -390,7 +416,7 @@ if realsize == 3 && startGreetings
             ymid = ( y(corners(2,2)) + y(corners(3,2)) )/2 ;
             deltax = xmid - t_xcenter ;
             deltay = ymid - t_ycenter ;
-            if sqrt(deltax^2 + deltay^2) < min(length)/2 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale )
+            if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2
                 string = 'Star';
                 return;
             end
@@ -415,7 +441,7 @@ if realsize == 3 && startGreetings
                 ymid = ( y(corners(1,2)) + y(corners(3,2)) )/2 ;
                 deltax = xmid - t_xcenter ;
                 deltay = ymid - t_ycenter ;
-                if sqrt(deltax^2 + deltay^2) < min(length)/2 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale )
+                if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2
                     string = 'Star';
                     return;
                 end
@@ -455,12 +481,17 @@ end
 %Anything beyond this point must be a square, rectangle, circle, trapezoid or unknown
 
 endGreetings = 0;
+endHugs = 0;
 deltax = x(corners(2,2)) - x(corners(4,2)) ;
 deltay = y(corners(2,2)) - y(corners(4,2)) ;
 distance = sqrt(  deltax^2  + deltay^2 ) ;
 
 if distance < 75
     endGreetings = 1;
+end
+
+if distance < 25
+    endHugs = 1;
 end
 
 startGreetings = 0;
@@ -474,7 +505,7 @@ end
 
 
 
-if perfectFit + goodFit == 0 && centersAllign && centerSpaced && endGreetings && startGreetings   %Catches circles
+if perfectFit + goodFit <= 1 && centersAllign && centerSpaced && endGreetings && startGreetings   %Catches circles
     string = 'Circle';  %***All regular n-sided shapes with n > 4 are likely to be caught here as circles
     return
 end
@@ -491,9 +522,9 @@ if endGreetings && startGreetings && centersAllign
         
     elseif perfectFit == 4 && par == 1 && perp <= 2 && highSideVariance == 0
         string = 'Trapezoid';
-    elseif (perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit == 1 ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && tiny == 1  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit == 1 && par == 1 && perp == 0 && highSideVariance == 0 && centerSpaced) 
+    elseif (perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit == 1 ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && tiny == 1  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit == 1 && par == 1 && perp == 0 && highSideVariance == 0 && centerSpaced) && quartPerp == 0
         string = 'Semicircle';
-    elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2
+    elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2 && endHugs && quartPerp
         string = 'Quarter Circle';
     end
     
