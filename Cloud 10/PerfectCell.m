@@ -36,29 +36,30 @@ close all;
 
 % IMAGE SELECTION
 
-  img_bad = imread('images/test/bad.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
-% img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
-% img_test = imread('images/test/test.jpg');
+  img_bad = imread('images/test/bad4.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+  img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
+  img_test = imread('images/test/test.jpg');
 % img_square = imread('images/test/square4.jpg');
+% img_difficult = imread('images/test/IMG_2376.jpg');
 % img_rectangle = imread('images/test/rectangle3.jpg');
 % img_barelyRectangle = imread('images/test/barelyRectangle.jpg');
-% img_star = imread('images/test/star5.jpg');
-% img_cross = imread('images/test/cross3.jpg');
+% img_star = imread('images/test/star6.jpg');
+% img_cross = imread('images/test/cross2.jpg');
 % img_trap = imread('images/test/trap.png');
 % img_nothing = imread('images/test/nothing2.jpg');
 % img_DBZ = imread('images/test/DBZ.png');
 % img_potato = imread('images/test/potato.jpg');
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
-% img_semi = imread('images/test/semi.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
-% img_quart = imread('images/test/quart4.jpg');
-% img_tringle = imread('images/test/tringle14.jpg');
+ img_semi = imread('images/test/semi3.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
+ img_quart = imread('images/test/quart11.jpg');
+ img_tringle = imread('images/test/tringle3.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
 
 % ******* Change the img assignment to debug with another image ********
 
-img = img_bad;
+img = img_tringle;
 % ******* Select Appropriate Mode *******
 
 mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
@@ -429,6 +430,13 @@ if mode
 end
 
 imshow(output);
-title(shape);
+
+[color1,color2] = getColorByHSV(output);
+
+if strcmp(color1, color2)
+    title(horzcat([shape, ' (', color1, ')']));
+else
+    title(horzcat([shape, ' (', color1 , ' or ' color2 ')']));
+end
 
 why

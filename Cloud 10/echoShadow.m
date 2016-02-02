@@ -1,6 +1,6 @@
 % Like mimicShadow, but used only for acute angled shapes
 
-function [ n_index ] = echoShadow( yArray, xArray, avoidx, avoidy )
+function [ n_index ] = echoShadow( xArray, yArray, avoidx, avoidy )
 
 try
     

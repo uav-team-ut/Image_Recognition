@@ -284,28 +284,28 @@ else
     
     if abs(-1/sideSlopes(1) - sideSlopes(2)) < max(abs(-1/sideSlopes(1)),abs(sideSlopes(2)))*.420
         perp = perp + 1;
-        if length(1) > 150 && length(2) > 150
+        if length(1) > 150 && length(2) > 150 && abs(length(1) - length(2)) < 50
             quartPerp = 1;
         end
     end
     
     if abs(-1/sideSlopes(2) - sideSlopes(4)) < max(abs(-1/sideSlopes(2)),abs(sideSlopes(4)))*.420
         perp = perp + 1;
-        if length(2) > 150 && length(4) > 150
+        if length(2) > 150 && length(4) > 150 && abs(length(2) - length(4)) < 50
             quartPerp = 1;
         end
     end
     
     if abs(-1/sideSlopes(4) - sideSlopes(3)) < max(abs(-1/sideSlopes(4)),abs(sideSlopes(3)))*.420
         perp = perp + 1;
-        if length(4) > 150 && length(3) > 150
+        if length(4) > 150 && length(3) > 150 && abs(length(4) - length(3)) < 50
             quartPerp = 1;
         end
     end
     
     if abs(-1/sideSlopes(3) - sideSlopes(1)) < max(abs(-1/sideSlopes(3)),abs(sideSlopes(1)))*.420
         perp = perp + 1;
-        if length(3) > 150 && length(1) > 150
+        if length(3) > 150 && length(1) > 150 && abs(length(3) - length(1)) < 50
             quartPerp = 1;
         end
     end
@@ -522,9 +522,9 @@ if endGreetings && startGreetings && centersAllign
         
     elseif perfectFit == 4 && par == 1 && perp <= 2 && highSideVariance == 0
         string = 'Trapezoid';
-    elseif (perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit == 1 ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && tiny == 1  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit == 1 && par == 1 && perp == 0 && highSideVariance == 0 && centerSpaced) && quartPerp == 0
+    elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit == 1 ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && tiny == 1  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit == 1 && par == 1 && perp == 0 && highSideVariance == 0 && centerSpaced)) && quartPerp == 0
         string = 'Semicircle';
-    elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2 && endHugs && quartPerp
+    elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2 && quartPerp
         string = 'Quarter Circle';
     end
     
