@@ -276,10 +276,14 @@ else
     
     if abs(sideSlopes(1) - sideSlopes(4)) < max(abs(sideSlopes(1)),abs(sideSlopes(4)))*.420
         par = par + 1;
+    elseif abs(sideSlopes(1) - sideSlopes(4)) < max(abs(sideSlopes(1)),abs(sideSlopes(4)))*.60
+        almostPar = almostPar + 1;
     end
     
     if abs(sideSlopes(2) - sideSlopes(3)) < max(abs(sideSlopes(2)),abs(sideSlopes(3)))*.420
         par = par + 1;
+    elseif abs(sideSlopes(2) - sideSlopes(3)) < max(abs(sideSlopes(2)),abs(sideSlopes(3)))*.60
+        almostPar = almostPar + 1;
     end
     
     if abs(-1/sideSlopes(1) - sideSlopes(2)) < max(abs(-1/sideSlopes(1)),abs(sideSlopes(2)))*.420
@@ -412,14 +416,14 @@ if realsize == 3 && startGreetings
                 end
                 return;
             end
-            xmid = ( x(corners(2,2)) + x(corners(3,2)) )/2 ;
-            ymid = ( y(corners(2,2)) + y(corners(3,2)) )/2 ;
-            deltax = xmid - t_xcenter ;
-            deltay = ymid - t_ycenter ;
-            if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2
-                string = 'Star';
-                return;
-            end
+%             xmid = ( x(corners(2,2)) + x(corners(3,2)) )/2 ;
+%             ymid = ( y(corners(2,2)) + y(corners(3,2)) )/2 ;
+%             deltax = xmid - t_xcenter ;
+%             deltay = ymid - t_ycenter ;
+%             if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2
+%                 string = 'Star';
+%                 return;
+%             end
             
         else
             
@@ -437,14 +441,14 @@ if realsize == 3 && startGreetings
                     end
                     return;
                 end
-                xmid = ( x(corners(1,2)) + x(corners(3,2)) )/2 ;
-                ymid = ( y(corners(1,2)) + y(corners(3,2)) )/2 ;
-                deltax = xmid - t_xcenter ;
-                deltay = ymid - t_ycenter ;
-                if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2
-                    string = 'Star';
-                    return;
-                end
+%                 xmid = ( x(corners(1,2)) + x(corners(3,2)) )/2 ;
+%                 ymid = ( y(corners(1,2)) + y(corners(3,2)) )/2 ;
+%                 deltax = xmid - t_xcenter ;
+%                 deltay = ymid - t_ycenter ;
+%                 if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2
+%                     string = 'Star';
+%                     return;
+%                 end
             end
         end
     end

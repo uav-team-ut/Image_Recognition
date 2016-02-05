@@ -1,9 +1,11 @@
 function [color] = color(h,s,v)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-if (h >= 0 && h < 20) || (h >= 330 && h <= 360)
-    if s <= 15
-        color = 'White2';
+
+if s <= 15
+    color = 'White';
+elseif (h >= 0 && h < 20) || (h >= 330 && h <= 360)
+    
+    if h == 1 && s == 1 && v == 1
+        color = 'Ignore';
     elseif v <= 16
         color = 'Black';
     else
@@ -22,4 +24,5 @@ elseif h >= 265 && h < 330
 else 
     color = 'cannot be determined';
 end
+
 end

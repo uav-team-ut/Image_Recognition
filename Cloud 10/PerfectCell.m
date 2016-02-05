@@ -6,7 +6,7 @@
 %      ****This implementation first determines IF there is a shape, and then classifies it*****
 %      Note: This implementation assumes there is atmost one shape per image
 % Output: Classifies the shape as:
-%          Triangle, Circle, Square, Rectangle, Trapezoid, Star, Cross, Semicircle, or Quarter Circle
+%          Triangle, Circle, Square, Rectangle, Trapezoid, Star(disabled), Cross, Semicircle, or Quarter Circle
 %      Note: Detects Squares, Rectangles, Triangles, and Circles with high
 %            accuracy, the rest have decent to poor accuracy, especially
 %            with a poor image quality
@@ -16,8 +16,8 @@
 %                   If the edge detection gods favor you, average time is < 2 secs
 %               All shapes are assumed to be regular, some non-regular shapes
 %                   might have unpredictable outputs
-%               Few safegaurds atm, false alarm might be high
-%               Some shapes with 0 rotation are not properly recognzed
+%               Average amount of safegaurds atm, false alarm is still relatively high
+%               Some shapes with 0 rotation (ie perfectly parallel with the x or y axis) are not properly recognzed
 %               Large patches of discontinuity lead to unpredictable output (ie. circle.png)
 %               There is not a consistent implementation for scale atm due to efficiency,
 %                   very small shapes with alot of noise might not be
@@ -25,41 +25,41 @@
 %               Regular n-sided polygons with n >= 5 WILL be falsely
 %                   detected as circles, trapezoids, or quarter circles; They do not have an
 %                   implementation atm
-%
+%               Color thresholds (in HSV) can be further refined (especially for off black)
 %   -Hari
 %
-
 clc;
 clear;
 workspace;
 close all;
 
+
 % IMAGE SELECTION
 
-  img_bad = imread('images/test/bad4.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
-  img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
-  img_test = imread('images/test/test.jpg');
-% img_square = imread('images/test/square4.jpg');
+ img_bad = imread('images/test/bad.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+% img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
+% img_test = imread('images/test/test.jpg');
+% img_square = imread('images/test/square5.jpg');
 % img_difficult = imread('images/test/IMG_2376.jpg');
 % img_rectangle = imread('images/test/rectangle3.jpg');
 % img_barelyRectangle = imread('images/test/barelyRectangle.jpg');
 % img_star = imread('images/test/star6.jpg');
 % img_cross = imread('images/test/cross2.jpg');
 % img_trap = imread('images/test/trap.png');
-% img_nothing = imread('images/test/nothing2.jpg');
+% img_nothing = imread('images/test/nothing3.jpg');
 % img_DBZ = imread('images/test/DBZ.png');
 % img_potato = imread('images/test/potato.jpg');
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
- img_semi = imread('images/test/semi3.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
- img_quart = imread('images/test/quart11.jpg');
- img_tringle = imread('images/test/tringle3.jpg');
+% img_semi = imread('images/test/semi3.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
+% img_quart = imread('images/test/quart.jpg');
+% img_tringle = imread('images/test/tringle5.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
 
 % ******* Change the img assignment to debug with another image ********
 
-img = img_tringle;
+img = img_bad;
 % ******* Select Appropriate Mode *******
 
 mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
@@ -76,8 +76,6 @@ thisImage = edge(a_gray, 'canny', filter);
 % Fill small holes/discontinuities and thin blobs
 se5 = strel('square', 5);
 se2 = strel('square', 2);
-% thisImageFilled = imdilate(thisImage,se2);
-% thisImageFilled = bwmorph(thisImageFilled, 'thin', Inf);
 
 if mode
     subplot(2,2,3);
@@ -107,7 +105,7 @@ try
 
 while  repeat && filter >=  .30
     
-    %thisImageThick is used to determine the boundary of a blob after dilating to fill holes (not displayed though)
+    % thisImageThick is used to determine the boundary of a blob after dilating to fill holes (not displayed though)
     thisImageThick = imdilate(thisImage,se5);
     
     blobs = regionprops(thisImageThick, 'BoundingBox');
@@ -132,7 +130,7 @@ while  repeat && filter >=  .30
         imshow(thisImage);
         axis on;
         title('After Pre-Processing');
-        subplot(2,2,2);
+        subplot(2,3,2);
     end
     
     if isempty(blobs)
@@ -155,7 +153,7 @@ while  repeat && filter >=  .30
             tryToRotate = 0;
             rotated = 1;
             if mode
-                cla(subplot(2,2,2));
+                cla(subplot(2,3,2));
             end
             % Shears are for some acute-angled tringles
         elseif tryToShear == 1 && sheared == 0
@@ -167,7 +165,7 @@ while  repeat && filter >=  .30
             tryToShear = 0;
             sheared = 1;
             if mode
-                cla(subplot(2,2,2));
+                cla(subplot(2,3,2));
             end
             % Else go to next blob
         else
@@ -199,7 +197,7 @@ while  repeat && filter >=  .30
         
         %DISPLAY BLOB APPROXIMATIONS
         if mode
-            cla(subplot(2,2,2));
+            cla(subplot(2,3,2));
             imshow(thisBlob);
             hold on; axis tight; axis on;
             title('Blob Approximations');
@@ -410,7 +408,7 @@ if mode
 end
 % OUTPUT APPROPRIATE FINAL IMAGE
 
-%Catches almost flat rectangles (that were detected as squares)
+% Catches almost flat rectangles (that were detected as squares)
 if strcmp(shape, 'Square') && abs(boundary(3) - boundary(4)) >= abs(.25*mean(boundary(3), boundary(4)))
     shape = 'Rectangle';
 end
@@ -426,10 +424,24 @@ else
 end
 
 if mode
-    subplot(2,2,1);
+    subplot(2,3,1);
 end
 
 imshow(output);
+
+if length(cornersArray) >= 3 && ~strcmp(shape, 'Empty')
+
+if length(cornersArray) == 3
+    r = [xArray(cornersArray(1,1)) xArray(cornersArray(1,2)) xArray(cornersArray(2,2))];
+    c = [yArray(cornersArray(1,1)) yArray(cornersArray(1,2)) yArray(cornersArray(2,2))];
+else
+    r = [xArray(cornersArray(1,1)) xArray(cornersArray(1,2)) xArray(cornersArray(2,2)) xArray(cornersArray(3,2))];
+    c = [yArray(cornersArray(1,1)) yArray(cornersArray(1,2)) yArray(cornersArray(2,2)) yArray(cornersArray(3,2))];
+end
+
+masked = roipoly(thisBlob,r,c);
+r_masked = imresize(masked,[boundary(1,4)+1 boundary(1,3)+1], 'Method', 'bicubic');
+output = bsxfun(@times, output, cast(r_masked, 'like', output));
 
 [color1,color2] = getColorByHSV(output);
 
@@ -437,6 +449,17 @@ if strcmp(color1, color2)
     title(horzcat([shape, ' (', color1, ')']));
 else
     title(horzcat([shape, ' (', color1 , ' or ' color2 ')']));
+end
+
+if mode
+    subplot(2,3,3);
+    imshow(output);
+    title('Colored Foreground (Masked)');
+    axis on;
+end
+
+else
+title(shape);
 end
 
 why

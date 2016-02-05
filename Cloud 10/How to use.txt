@@ -24,7 +24,7 @@ General Algorithm:
 Accuracy:
 Good: Tringles, Rectangles, Squares, Circles
 Decent: Semicircles, Quarter Circles, Trapezoids
-Abysmal: Stars, Crosses
+Abysmal: Stars(Disabled), Crosses 
 
 Ask if you have any questions =) !
 
