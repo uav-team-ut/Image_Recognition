@@ -44,8 +44,7 @@ mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approx
 % Standard for all images(no initial crop)
 
 filter = .70;                               % <--- Initial canny threshold (filter is decremented by .1 every iteration)
-RGB2 = imadjust(img,[.1 .1 .1; .9 .9 .9]);
-gray = rgb2gray(RGB2);
+gray = rgb2gray(img);
 a_gray = imadjust(gray);
 thisImage = edge(a_gray, 'canny', filter);
 
