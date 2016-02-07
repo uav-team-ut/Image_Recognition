@@ -36,10 +36,10 @@ close all;
 
 % IMAGE SELECTION
 
- img_bad = imread('images/test/bad.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+ img_bad = imread('images/test/bad4.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
 % img_test = imread('images/test/test.jpg');
-% img_square = imread('images/test/square5.jpg');
+% img_square = imread('images/test/square.jpg');
 % img_difficult = imread('images/test/IMG_2376.jpg');
 % img_rectangle = imread('images/test/rectangle3.jpg');
 % img_barelyRectangle = imread('images/test/barelyRectangle.jpg');
@@ -47,7 +47,7 @@ close all;
 % img_cross = imread('images/test/cross2.jpg');
 % img_trap = imread('images/test/trap.png');
 % img_nothing = imread('images/test/nothing3.jpg');
-% img_DBZ = imread('images/test/DBZ.png');
+ img_DBZ = imread('images/test/DBZ.png');
 % img_potato = imread('images/test/potato.jpg');
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
@@ -59,7 +59,7 @@ close all;
 
 % ******* Change the img assignment to debug with another image ********
 
-img = img_bad;
+img = img_DBZ;
 % ******* Select Appropriate Mode *******
 
 mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
@@ -73,7 +73,7 @@ gray = rgb2gray(RGB2);
 a_gray = imadjust(gray);
 thisImage = edge(a_gray, 'canny', filter);
 
-% Fill small holes/discontinuities and thin blobs
+% Used to fill small holes/discontinuities
 se5 = strel('square', 5);
 se2 = strel('square', 2);
 
@@ -81,6 +81,7 @@ if mode
     subplot(2,2,3);
     imshow(img);
     title('Initial Image');
+    set(gcf, 'Position', get(0,'Screensize')); % Maximize figure.
 end
 
 % GLOBAL INITIALIZATIONS
@@ -120,7 +121,7 @@ while  repeat && filter >=  .30
         counter = counter + 1;
     end
     
-%     blobAreas = regionprops(thisImage, 'area');
+%     blobAreas = regionprops(thisImage, 'area');       %Order the blobs by their area
 %     order = [blobAreas.Area];
 %     [~,idx]=sort(order, 'descend');
 %     blobs=blobs(idx);
@@ -319,7 +320,8 @@ while  repeat && filter >=  .30
         end
         
         % SHAPE RETRIEVAL
-        [shape, xcenter, ycenter] = discriminate( cornersArray, xArray, yArray, index, traversal );
+        [~, xdim, ~] = size(thisBlob);
+        [shape, xcenter, ycenter] = discriminate( cornersArray, xArray, yArray, index, traversal, xdim );
         
         % CHECK IF BLOB NEEDS TO BE FLIPPED AND RERUN
         if strcmp(shape, 'KAMEHAMEHA') && flipped == 0
@@ -439,8 +441,9 @@ else
     c = [yArray(cornersArray(1,1)) yArray(cornersArray(1,2)) yArray(cornersArray(2,2)) yArray(cornersArray(3,2))];
 end
 
+[height, width, dim] = size(output);
 masked = roipoly(thisBlob,r,c);
-r_masked = imresize(masked,[boundary(1,4)+1 boundary(1,3)+1], 'Method', 'bicubic');
+r_masked = imresize(masked,[height width], 'Method', 'bicubic');
 output = bsxfun(@times, output, cast(r_masked, 'like', output));
 
 [color1,color2] = getColorByHSV(output);

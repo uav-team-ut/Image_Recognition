@@ -1,7 +1,7 @@
 
 % This is where the classification actually happens
 
-function [ string , xcenter, ycenter] = discriminate( corners, x, y, index, traversal )
+function [ string , xcenter, ycenter] = discriminate( corners, x, y, index, traversal, xdim )
 
 xcenter = 0;
 ycenter = 0;
@@ -122,7 +122,7 @@ for a = 1:realsize
     end
 end
 
-if realsize == 2 && notAlone( 150 , 150 , x, y, fitScale ) && ((notAlone( 50 , 250 , x, y, fitScale ) && notAlone( 250 , 50 , x, y, fitScale )) || (notAlone( 50 , 50 , x, y, fitScale ) && notAlone( 250 , 250 , x, y, fitScale ))) && length(1) > 300
+if realsize == 2 && notAlone( xdim/2 , 150, x, y, fitScale ) && ((notAlone( (3/4)*xdim , 75, x, y, fitScale ) && notAlone( (1/4)*xdim, 225, x, y, fitScale )) || (notAlone( (1/4)*xdim , 75 , x, y, fitScale ) && notAlone( (3/4)*xdim , 225 , x, y, fitScale ))) && length(1) > 300
     if y(corners(1,2)) - y(corners(1,1)) < 0;
         string = 'Lee';
         return
