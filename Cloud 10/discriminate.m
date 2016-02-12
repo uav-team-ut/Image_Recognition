@@ -157,6 +157,7 @@ end
 
 startGreetings = 0;
 endGreetings = 0;
+endHugs = 0;
 
 % Checking that start and end points are close
 
@@ -170,6 +171,11 @@ if realsize == 3
         if  distance < 100
             endGreetings = 1;
         end
+        
+        if  distance < 50
+            endHugs = 1;
+        end
+               
         
         deltax = x(corners(1,1)) - x(corners(3,1)) ;
         deltay = y(corners(1,1)) - y(corners(3,1)) ;
@@ -185,15 +191,19 @@ if realsize == 3
         deltay = y(corners(3,2)) - y(corners(1,2)) ;
         distance = sqrt(deltax^2 + deltay^2) ;
         
-        if  distance < 100
+        if  distance < 75
             endGreetings = 1;
+        end
+        
+        if  distance < 50
+            endHugs = 1;
         end
         
         deltax = x(corners(1,1)) - x(corners(2,1)) ;
         deltay = y(corners(1,1)) - y(corners(2,1)) ;
         distance = sqrt(deltax^2 + deltay^2) ;
         
-        if distance < 100
+        if distance < 75
             startGreetings = 1;
         end
         
@@ -363,6 +373,18 @@ if ~notAlone( xcenter , ycenter , xEdges, yEdges, 50 )
     centerSpaced = 1;
 end
 
+centerSpacedforApproxs = 1;
+
+for r = 1:realsize
+    xmid = ( ( x(corners(r,2)) ) + x(corners(r,1)) )/2 ;
+    ymid = ( ( y(corners(r,2)) ) + y(corners(r,1)) )/2 ;
+   
+    deltax = xmid - xcenter;
+    deltay = ymid - ycenter;
+    if sqrt(deltax^2 + deltay^2) < 50
+        centerSpacedforApproxs = 0;
+    end
+end
 
 %% THREE-SIDED SHAPES
 
@@ -377,9 +399,8 @@ if realsize == 3 && startGreetings
         string = '5/7';                                    %Catches weird Stars
         return;
     end
-    
-    
-    if perfectFit == 1 && longPerfFit == 1 && centersAllign && ~highSideVariance && endGreetings   %Catches acute 3-sided Semicircles
+        
+    if perfectFit == 1 && longPerfFit == 1 && centersAllign && ~highSideVariance && endGreetings && centerSpacedforApproxs   %Catches acute 3-sided Semicircles
         string = 'Semicircle';
         return
     end
@@ -416,14 +437,14 @@ if realsize == 3 && startGreetings
                 end
                 return;
             end
-%             xmid = ( x(corners(2,2)) + x(corners(3,2)) )/2 ;
-%             ymid = ( y(corners(2,2)) + y(corners(3,2)) )/2 ;
-%             deltax = xmid - t_xcenter ;
-%             deltay = ymid - t_ycenter ;
-%             if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2
-%                 string = 'Star';
-%                 return;
-%             end
+            xmid = ( x(corners(2,2)) + x(corners(3,2)) )/2 ;
+            ymid = ( y(corners(2,2)) + y(corners(3,2)) )/2 ;
+            deltax = xmid - t_xcenter ;
+            deltay = ymid - t_ycenter ;
+            if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 1 && abs(300-xdim) < 100
+                string = 'Star';
+                return;
+            end
             
         else
             
@@ -441,14 +462,14 @@ if realsize == 3 && startGreetings
                     end
                     return;
                 end
-%                 xmid = ( x(corners(1,2)) + x(corners(3,2)) )/2 ;
-%                 ymid = ( y(corners(1,2)) + y(corners(3,2)) )/2 ;
-%                 deltax = xmid - t_xcenter ;
-%                 deltay = ymid - t_ycenter ;
-%                 if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2
-%                     string = 'Star';
-%                     return;
-%                 end
+                xmid = ( x(corners(1,2)) + x(corners(3,2)) )/2 ;
+                ymid = ( y(corners(1,2)) + y(corners(3,2)) )/2 ;
+                deltax = xmid - t_xcenter ;
+                deltay = ymid - t_ycenter ;
+                if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2 && abs(300-xdim) < 100
+                    string = 'Star';
+                    return;
+                end
             end
         end
     end
@@ -460,8 +481,9 @@ if realsize == 3 && startGreetings
     
     
     if perfectFit + goodFit == 3
+    
         
-        if  endGreetings  && centersAllign && highSideVariance == 0
+        if  endHugs && centersAllign && highSideVariance == 0
             string = 'Tringle';
             return
         end
@@ -515,7 +537,7 @@ if perfectFit + goodFit <= 1 && centersAllign && centerSpaced && endGreetings &&
 end
 
 
-if endGreetings && startGreetings && centersAllign
+if endGreetings && startGreetings && centersAllign && centerSpacedforApproxs
     
     if perfectFit + goodFit == 4 && par + almostPar == 2 && perp >= 2
         if (( max(length) - min(length)) < .20* mean(length) )
