@@ -1,16 +1,11 @@
 function [color] = color(h,s,v)
 
-if s <= 15
+if v <= 15
+    color = 'Black';
+elseif s <= 15
     color = 'White';
 elseif (h >= 0 && h < 20) || (h >= 330 && h <= 360)
-    
-    if h == 1 && s == 1 && v == 1
-        color = 'Ignore';
-    elseif v <= 16
-        color = 'Black';
-    else
-        color = 'Red';
-    end
+    color = 'Red';
 elseif h >= 20 && h < 50
     color = 'Orange';
 elseif h >= 50 && h < 70
