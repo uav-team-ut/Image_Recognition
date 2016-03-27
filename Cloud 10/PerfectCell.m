@@ -37,7 +37,7 @@ close all;
 
 % IMAGE SELECTION
 
- img_bad = imread('images/test/bad11.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+ img_bad = imread('images/test/bad10.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
 % img_test = imread('images/test/test.jpg');
 % img_square = imread('images/test/square.jpg');
@@ -53,7 +53,7 @@ close all;
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
 % img_semi = imread('images/test/semi3.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
-% img_quart = imread('images/test/quart4.jpg');
+ img_quart = imread('images/test/quart3.jpg');
 % img_tringle = imread('images/test/tringle6.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
@@ -72,6 +72,7 @@ filter = .80;                               % <--- Initial canny threshold (filt
 RGB2 = imadjust(img,[.1 .1 .1; .9 .9 .9]);
 gray = rgb2gray(RGB2);
 a_gray = imadjust(gray);
+% a_gray = imrotate(a_gray, 10);
 thisImage = edge(a_gray, 'canny', filter);
 
 % Used to fill small holes/discontinuities
@@ -101,7 +102,7 @@ nothing = 0;
 
 % GLOBAL ERROR HANDLE; catches all exceptions (including no shape/ no white pixels)
 
-try
+ try
 
 % ITERATIVE NOISE FILTER; loops until a shape is found or filter hits limit
 

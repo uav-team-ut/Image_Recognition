@@ -101,6 +101,7 @@ for a = 1:realsize
         perfectFit = perfectFit + 1;
         if length(a) == max(length)
             longestPerfFit = 1;
+            associatedLongIndex = a;
         end
         if length(a) >= 125
             longPerfFit = longPerfFit + 1;
@@ -551,7 +552,12 @@ if endGreetings && startGreetings && centersAllign && centerSpacedforApproxs
     elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit == 1 ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && tiny == 1  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit == 1 && par == 1 && perp == 0 && highSideVariance == 0 && centerSpaced)) && quartPerp == 0
         string = 'Semicircle';
     elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2 && quartPerp
+%         [~,shortSide] = min(length);
+%         if longestPerfFit == 1 && abs(associatedLongIndex - shortSide) == 1
+%             string = 'Tringle';
+%         else
         string = 'Quarter Circle';
+%         end
     end
     
 end
