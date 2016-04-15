@@ -382,7 +382,7 @@ for r = 1:realsize
    
     deltax = xmid - xcenter;
     deltay = ymid - ycenter;
-    if sqrt(deltax^2 + deltay^2) < 50
+    if sqrt(deltax^2 + deltay^2) < 35
         centerSpacedforApproxs = 0;
     end
 end
@@ -540,7 +540,7 @@ end
 
 if endGreetings && startGreetings && centersAllign && centerSpacedforApproxs
     
-    if perfectFit + goodFit == 4 && par + almostPar == 2 && perp >= 2
+    if perfectFit + goodFit >= 3 && par + almostPar == 2 && perp >= 2 && par >= 1
         if (( max(length) - min(length)) < .20* mean(length) )
             string = 'Square';
         else
@@ -549,7 +549,7 @@ if endGreetings && startGreetings && centersAllign && centerSpacedforApproxs
         
     elseif perfectFit == 4 && par == 1 && perp <= 2 && highSideVariance == 0
         string = 'Trapezoid';
-    elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit == 1 ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && tiny == 1  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit == 1 && par == 1 && perp == 0 && highSideVariance == 0 && centerSpaced)) && quartPerp == 0
+    elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit == 1 ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && tiny == 1  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit == 1 && par == 1 && perp <= 2 && centerSpaced)) && quartPerp == 0
         string = 'Semicircle';
     elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2 && quartPerp
 %         [~,shortSide] = min(length);

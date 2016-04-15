@@ -35,9 +35,9 @@ workspace;
 close all;
 
 
-% IMAGE SELECTION
+%% IMAGE SELECTION
 
- img_bad = imread('images/test/bad10.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+ img_bad = imread('images/test/bad2.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
 % img_test = imread('images/test/test.jpg');
 % img_square = imread('images/test/square.jpg');
@@ -46,37 +46,38 @@ close all;
 % img_barelyRectangle = imread('images/test/barelyRectangle.jpg');
 % img_star = imread('images/test/star.jpg');
 % img_cross = imread('images/test/cross2.jpg');
- img_trap = imread('images/test/trap.png');
+% img_trap = imread('images/test/trap.png');
 % img_nothing = imread('images/test/nothing3.jpg');
 % img_DBZ = imread('images/test/DBZ.png');
 % img_potato = imread('images/test/potato.jpg');
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
 % img_semi = imread('images/test/semi3.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
- img_quart = imread('images/test/quart3.jpg');
+% img_quart = imread('images/test/quart19.jpg');
 % img_tringle = imread('images/test/tringle6.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
+ img_qr = imread('images/test/qr1.jpg');
 
 % ******* Change the img assignment to debug with another image ********
 
-img = img_bad;
+img = img_qr;
 % ******* Select Appropriate Mode *******
 
 mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
 
-% PRE-IMAGE PROCESSING
+%% PRE-IMAGE PROCESSING
 % Standard for all images(no initial crop)
 
 filter = .80;                               % <--- Initial canny threshold (filter is decremented by .1 every iteration)
 RGB2 = imadjust(img,[.1 .1 .1; .9 .9 .9]);
 gray = rgb2gray(RGB2);
 a_gray = imadjust(gray);
-% a_gray = imrotate(a_gray, 10);
 thisImage = edge(a_gray, 'canny', filter);
 
 % Used to fill small holes/discontinuities
 se5 = strel('square', 5);
+se3 = strel('square', 3);
 se2 = strel('square', 2);
 
 if mode
@@ -104,7 +105,7 @@ nothing = 0;
 
  try
 
-% ITERATIVE NOISE FILTER; loops until a shape is found or filter hits limit
+%% ITERATIVE NOISE FILTER; loops until a shape is found or filter hits limit
 
 while  repeat && filter >=  .30
     
@@ -142,7 +143,7 @@ while  repeat && filter >=  .30
     end
     
     z = 1;
-    % LOOPING THROUGH BLOBS
+    %% LOOPING THROUGH BLOBS
     while z <= length(blobs)
         % Flips are for acute-angle-oriented shapes
         if tryToFlip == 1 && flipped == 0
@@ -193,9 +194,17 @@ while  repeat && filter >=  .30
             end
             
             % STANDARDIZING SCALE/SIZE OF THE BLOB
-            thisBlob = imdilate(thisBlob,se2);
+            
+            
+%             thisBlob = imdilate(thisBlob,se2);
+%             thisBlob = imresize(thisBlob, [300 NaN], 'Method', 'bicubic') ;
+%             thisBlob = bwmorph(thisBlob, 'thin', Inf);
+            
+            thisBlob = bwareaopen(thisBlob, 50*noiseLVL);
+            thisBlob = imdilate(thisBlob,se3);
             thisBlob = imresize(thisBlob, [300 NaN], 'Method', 'bicubic') ;
-            thisBlob = bwmorph(thisBlob, 'thin', Inf);
+            thisBlob = imfill(thisBlob,'holes');
+            thisBlob = bwperim(thisBlob, 8);
         end
         
         %DISPLAY BLOB APPROXIMATIONS
@@ -325,7 +334,7 @@ while  repeat && filter >=  .30
         [~, xdim, ~] = size(thisBlob);
         [shape, xcenter, ycenter] = discriminate( cornersArray, xArray, yArray, index, traversal, xdim );
         
-        % CHECK IF BLOB NEEDS TO BE FLIPPED AND RERUN
+        %% CHECK IF BLOB NEEDS TO BE FLIPPED AND RERUN
         if strcmp(shape, 'KAMEHAMEHA') && flipped == 0
             tryToFlip = 1;
             continue
@@ -410,7 +419,8 @@ if mode
     end
     
 end
-% OUTPUT APPROPRIATE FINAL IMAGE
+
+%% OUTPUT APPROPRIATE FINAL IMAGE
 
 % Catches almost flat rectangles (that were detected as squares)
 if strcmp(shape, 'Square') && abs(boundary(3) - boundary(4)) >= abs(.25*mean(boundary(3), boundary(4)))
@@ -422,16 +432,16 @@ if strcmp(shape, 'Unknown') || strcmp(shape, 'KAMEHAMEHA') || strcmp(shape, '5/7
 end
 
 if strcmp(shape, 'Empty')
-    output = img;
+    croppedOutput = img;
 else
-    output = imcrop(img, boundary);
+    croppedOutput = imcrop(img, boundary);
 end
 
 if mode
     subplot(2,3,1);
 end
 
-imshow(output);
+imshow(croppedOutput);
 
 if length(cornersArray) >= 3 && ~strcmp(shape, 'Empty')
 
@@ -443,12 +453,12 @@ else
     c = [yArray(cornersArray(1,1)) yArray(cornersArray(1,2)) yArray(cornersArray(2,2)) yArray(cornersArray(3,2))];
 end
 
-[height, width, dim] = size(output);
+[height, width, dim] = size(croppedOutput);
 masked = roipoly(thisBlob,r,c);
 r_masked = imresize(masked,[height width], 'Method', 'bicubic');
-output = bsxfun(@times, output, cast(r_masked, 'like', output));
+maskedOutput = bsxfun(@times, croppedOutput, cast(r_masked, 'like', croppedOutput));
 
-[color1,color2] = getColorByHSV(output);
+[color1,color2] = getColorByHSV(maskedOutput);
 
 if strcmp(color1, color2)
     title(horzcat([shape, ' (', color1, ')']));
@@ -458,13 +468,26 @@ end
 
 if mode
     subplot(2,3,3);
-    imshow(output);
+    imshow(maskedOutput);
     title('Colored Foreground (Masked)');
     axis on;
 end
 
 else
 title(shape);
+end
+
+if strcmp(shape,'Square') || strcmp(shape,'Rectangle')
+    imwrite(imresize(croppedOutput, 5), 'qr_output.jpg');
+    message = read_qr(imread('qr_output.jpg'));
+    if ~strcmp(message, 'error')
+        if mode
+            subplot(2,3,1);
+            imshow(croppedOutput)
+        end
+        title('QR Code Found!')
+        xlabel(message, 'FontSize', 15);       
+    end
 end
 
 % Attempt at OCR
