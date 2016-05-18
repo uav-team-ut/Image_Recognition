@@ -36,7 +36,7 @@ distance = zeros([15 1]);
 keepGoing = 1;
 offset = 5;
 
-while count <= 15
+while count <= 10
     if selection == 1                   % GOING UP
         if index > offset       % This portion is for forced traversal directly upward
             if xArray(index-offset) - xArray(index) == 0 && abs(yArray(index-offset)- yArray(index)) < 20

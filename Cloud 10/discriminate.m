@@ -101,7 +101,7 @@ for a = 1:realsize
         perfectFit = perfectFit + 1;
         if length(a) == max(length)
             longestPerfFit = 1;
-            associatedLongIndex = a;
+%             associatedLongIndex = a;
         end
         if length(a) >= 125
             longPerfFit = longPerfFit + 1;
@@ -438,14 +438,17 @@ if realsize == 3 && startGreetings
                 end
                 return;
             end
-            xmid = ( x(corners(2,2)) + x(corners(3,2)) )/2 ;
-            ymid = ( y(corners(2,2)) + y(corners(3,2)) )/2 ;
-            deltax = xmid - t_xcenter ;
-            deltay = ymid - t_ycenter ;
-            if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 1 && abs(300-xdim) < 100
-                string = 'Star';
-                return;
-            end
+            
+            % Stars disabled
+            
+%             xmid = ( x(corners(2,2)) + x(corners(3,2)) )/2 ;
+%             ymid = ( y(corners(2,2)) + y(corners(3,2)) )/2 ;
+%             deltax = xmid - t_xcenter ;
+%             deltay = ymid - t_ycenter ;
+%             if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 1 && abs(300-xdim) < 100
+%                 string = 'Star';
+%                 return;
+%             end
             
         else
             
@@ -463,14 +466,17 @@ if realsize == 3 && startGreetings
                     end
                     return;
                 end
-                xmid = ( x(corners(1,2)) + x(corners(3,2)) )/2 ;
-                ymid = ( y(corners(1,2)) + y(corners(3,2)) )/2 ;
-                deltax = xmid - t_xcenter ;
-                deltay = ymid - t_ycenter ;
-                if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2 && abs(300-xdim) < 100
-                    string = 'Star';
-                    return;
-                end
+                
+                % Stars disabled
+                
+%                 xmid = ( x(corners(1,2)) + x(corners(3,2)) )/2 ;
+%                 ymid = ( y(corners(1,2)) + y(corners(3,2)) )/2 ;
+%                 deltax = xmid - t_xcenter ;
+%                 deltay = ymid - t_ycenter ;
+%                 if sqrt(deltax^2 + deltay^2) < 75 && notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && longPerfFit == 0 && trapSide == 2 && abs(300-xdim) < 100
+%                     string = 'Star';
+%                     return;
+%                 end
             end
         end
     end
@@ -489,10 +495,10 @@ if realsize == 3 && startGreetings
             return
         end
         
-        if  par == 1 && perp == 2 && sum(length) < 300
-            string = 'Cross';
-            return
-        end
+%         if  par == 1 && perp == 2 && sum(length) < 300
+%             string = 'Cross';
+%             return
+%         end
         
         
     end
@@ -508,7 +514,7 @@ end
 %Anything beyond this point must be a square, rectangle, circle, trapezoid or unknown
 
 endGreetings = 0;
-endHugs = 0;
+% endHugs = 0;
 deltax = x(corners(2,2)) - x(corners(4,2)) ;
 deltay = y(corners(2,2)) - y(corners(4,2)) ;
 distance = sqrt(  deltax^2  + deltay^2 ) ;
@@ -517,9 +523,9 @@ if distance < 75
     endGreetings = 1;
 end
 
-if distance < 25
-    endHugs = 1;
-end
+% if distance < 25
+%     endHugs = 1;
+% end
 
 startGreetings = 0;
 deltax = x(corners(1,1)) - x(corners(3,1)) ;
