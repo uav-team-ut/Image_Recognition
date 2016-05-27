@@ -1,5 +1,8 @@
 % Main
 
+%function [] = PerfectCell( img )
+
+
 % Input: Any RGB image // Can be a direct frame from the camera // CANNOT BE ONLY BW
 %      ****Does NOT have to contain a shape****
 %      ****Does NOT need cropping of the shape****
@@ -40,7 +43,7 @@ workspace;
 
 %% IMAGE SELECTION
 
-img_bad = imread('images/test/bad3.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+% img_bad = imread('images/test/bad3.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
 % img_test = imread('images/test/test.jpg');
 % img_square = imread('images/test/square.jpg');
@@ -60,16 +63,17 @@ img_bad = imread('images/test/bad3.jpg');         % tringle in bad4.jpg fails (b
 % img_tringle = imread('images/test/tringle6.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
-img_qr = imread('images/test/qr2.jpg');
-% img_test = imread('images/test/many.png');
+% img_qr = imread('images/test/qr2.jpg');
+img_test = imread('images/image-111.jpg');
 
 % ******* Change the img assignment to debug with another image *******
 
-img = img_bad;
+img = img_test;
 
 % ******* Select Appropriate Mode *******
 
 mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
+
 % Use 0 for competition =)
 
 %% PRE-IMAGE PROCESSING
@@ -211,6 +215,22 @@ try
                 thisBlob = imresize(thisBlob, [300 NaN], 'Method', 'bicubic') ;
                 thisBlob = imfill(thisBlob,'holes');
                 thisBlob = bwperim(thisBlob, 8);
+                
+                numberOfWhite = sum(thisBlob(:));
+                
+                if numberOfWhite < 75
+                    tryToFlip = 0;
+                    tryToRotate = 0;
+                    tryToShear = 0;
+                    flipped = 0;
+                    rotated = 0;
+                    sheared = 0;
+                    crossConfirm = 0;
+                    nothing = 0;
+                    z = z+1;
+                    continue
+                end
+                
             end
             
             %DISPLAY BLOB APPROXIMATIONS
