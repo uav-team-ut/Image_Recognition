@@ -1,6 +1,6 @@
 % Main
 
-%function [] = PerfectCell( img )
+function [] = PerfectCell( img )
 
 
 % Input: Any RGB image // Can be a direct frame from the camera // CANNOT BE ONLY BW
@@ -64,15 +64,15 @@ workspace;
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
 % img_qr = imread('images/test/qr2.jpg');
-img_test = imread('images/image-111.jpg');
+%img_test = imread('images/image-111.jpg');
 
 % ******* Change the img assignment to debug with another image *******
 
-img = img_test;
+%img = img_test;
 
 % ******* Select Appropriate Mode *******
 
-mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
+mode = 0;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
 
 % Use 0 for competition =)
 
