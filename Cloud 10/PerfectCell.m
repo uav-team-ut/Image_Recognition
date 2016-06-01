@@ -1,6 +1,4 @@
-% Main
-
-function [] = PerfectCell( img )
+%function [] = PerfectCell( img, fileName )
 
 
 % Input: Any RGB image // Can be a direct frame from the camera // CANNOT BE ONLY BW
@@ -64,15 +62,20 @@ workspace;
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
 % img_qr = imread('images/test/qr2.jpg');
-%img_test = imread('images/image-111.jpg');
+img_test = imread('images/image-115.jpg');
 
 % ******* Change the img assignment to debug with another image *******
 
-%img = img_test;
+img = img_test;
 
-% ******* Select Appropriate Mode *******
+% Special Crop to fix ffmpeg capture
+img = imcrop(img, [0 10 1920 1072]);
 
-mode = 0;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
+% ******* Select Appropriate Modes *******
+
+mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
+
+writeEnable = 1;   % 0 - No Write               1 - shape written on disk
 
 % Use 0 for competition =)
 
@@ -88,7 +91,7 @@ thisImage = edge(a_gray, 'canny', filter);
 % Used to fill small holes/discontinuities
 se5 = strel('square', 5);
 se3 = strel('square', 3);
-se2 = strel('square', 2);
+%se2 = strel('square', 2);
 
 if mode
     subplot(2,2,3);
@@ -117,7 +120,7 @@ try
     
     %% ITERATIVE NOISE FILTER; loops until a shape is found or filter hits limit
     
-    while  repeat && filter >=  .40
+    while  repeat && filter >=  .50
         
         % thisImageThick is used to determine the boundary of a blob after dilating to fill holes (not displayed though)
         thisImageThick = imdilate(thisImage,se5);
@@ -190,7 +193,7 @@ try
                 numberOfWhite = sum(thisBlob(:));
                 
                 % If image is too small, skip to next blob
-                if numberOfWhite < 75
+                if numberOfWhite < 50
                     tryToFlip = 0;
                     tryToRotate = 0;
                     tryToShear = 0;
@@ -214,22 +217,7 @@ try
                 thisBlob = imdilate(thisBlob,se3);
                 thisBlob = imresize(thisBlob, [300 NaN], 'Method', 'bicubic') ;
                 thisBlob = imfill(thisBlob,'holes');
-                thisBlob = bwperim(thisBlob, 8);
-                
-                numberOfWhite = sum(thisBlob(:));
-                
-                if numberOfWhite < 75
-                    tryToFlip = 0;
-                    tryToRotate = 0;
-                    tryToShear = 0;
-                    flipped = 0;
-                    rotated = 0;
-                    sheared = 0;
-                    crossConfirm = 0;
-                    nothing = 0;
-                    z = z+1;
-                    continue
-                end
+                thisBlob = bwperim(thisBlob, 8);             
                 
             end
             
@@ -284,10 +272,10 @@ try
             
             if ( yolo/(goUntil-1) < yArray(1) )
                 start = 1;                      %GO UP FIRST
-                firstDirection = 'up';
+                %firstDirection = 'up';
             else
                 start = 0;                      %GO DOWN FIRST
-                firstDirection = 'down';
+                %firstDirection = 'down';
             end
             
             traversal = 0;
@@ -404,7 +392,7 @@ try
         
         % INCREMENT AND PROCESS NOISE FILTER
         if ~tryToFlip && ~tryToRotate && ~tryToShear
-            prevImage = thisImage;
+            %prevImage = thisImage;
             
             filter = filter - .10;
             thisImage = edge(a_gray, 'canny', filter);
@@ -482,7 +470,7 @@ if length(cornersArray) >= 3 && ~strcmp(shape, 'Empty')
         c = [yArray(cornersArray(1,1)) yArray(cornersArray(1,2)) yArray(cornersArray(2,2)) yArray(cornersArray(3,2))];
     end
     
-    [height, width, dim] = size(croppedOutput);
+    [height, width, ~] = size(croppedOutput);
     masked = roipoly(thisBlob,r,c);
     r_masked = imresize(masked,[height width], 'Method', 'bicubic');
     maskedOutput = bsxfun(@times, croppedOutput, cast(r_masked, 'like', croppedOutput));
@@ -519,18 +507,13 @@ if strcmp(shape,'Square') || strcmp(shape,'Rectangle')
     end
 end
 
-% Attempt at OCR
 
-% thisBlob = imfill(thisBlob, [186 149], 4);
-% thisBlob = bwmorph(thisBlob, 'thin', 'inf');
-% thisBlob = imrotate(thisBlob, 35);
-% close all;
-% imshow(thisBlob);
-% thisBlob = imcrop(thisBlob);
-% thisBlob = imdilate(thisBlob,se5);
-% thisBlob = padarray(thisBlob,[500 500]);
-% ocr(thisBlob)
-% imshow(thisBlob);
 
+% Flush display buffer
+drawnow('update');
+
+if writeEnable && ~strcmp(shape, 'Empty')
+    saveas(gcf, strcat('images_results/',fileName))
+end
 
 why

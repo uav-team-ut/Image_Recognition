@@ -105,7 +105,7 @@ longPerfFit = 0;
 perfectFit = 0;
 goodFit = 0;
 tringleAlert = 0;
-[~,associatedLongIndex] = max(length);
+[~,shortSide] = min(length);
 
 
 
@@ -124,16 +124,20 @@ for a = 1:realsize
         perfectFit = perfectFit + 1;
         if length(a) == max(length)
             longestPerfFit = 1;
+            associatedLongIndex = a;
         end
         
-
+        if length(a) >= 200
+            if a ~= associatedLongIndex && length(associatedLongIndex) - length (a) < 25
+                tringleAlert = 1;
+            end
+        end
         if length(a) >= 125
             longPerfFit = longPerfFit + 1;
-        end      
-    end
-     
-    if length(a) >= 200 && a ~= associatedLongIndex && length(associatedLongIndex) - length (a) < 25
-        tringleAlert = 1;
+        end
+        
+        
+        
     end
     
     for q = 1:3

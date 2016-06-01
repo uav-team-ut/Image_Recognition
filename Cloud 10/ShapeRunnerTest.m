@@ -15,7 +15,7 @@ while true,
         img_orig = imread(['images/' file.name]);
         %imshow(img_orig);
         %figure()
-        PerfectCell(img_orig)
+        PerfectCell(img_orig, file.name)
         images_processed{end+1} = file.name;
     end
 end
