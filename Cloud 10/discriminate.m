@@ -12,7 +12,7 @@
 %       (traversal) and the horizontal dimension of blob (xdim)
 % Output: 
 %   A string describing the shape detected
-%   Possible shapes: Triangle, Circle, Square, Rectangle, Trapezoid, Star(disabled), Cross, Semicircle, or Quarter Circle
+%   Possible shapes: Triangle, Circle, Square, Rectangle, Trapezoid(some orientations diableed), Star(disabled), Cross, Semicircle, or Quarter Circle
 %   If no shape is detected, returns 'Unknown'
 %   If a blob might be a shape, but requires further approximations, intermediate
 %       outputs are sent to be interpreted by PerfectCell, such as: 'KAMEHAMEHA', 'Lee', 'Riven', '5/7'.
@@ -166,6 +166,34 @@ elseif (realsize == 2 && lowSideVariance) || (almostFlat && realsize <= 2) || (d
 elseif realsize <= 2
     return
 end
+
+%% Interior Point Condition 
+% Determine if approximations are inside polygon determined by corners
+
+insideBlob = 0;
+
+if realsize == 4
+    xCorners = [ x(corners(1,1)), x(corners(2,1)), x(corners(4,2)), x(corners(4,1)) ];
+    yCorners = [ y(corners(1,1)), y(corners(2,1)), y(corners(4,2)), y(corners(4,1)) ];
+
+[numEdges,~] = size(xEdges);
+numIterations = floor(numEdges/20);
+    
+for s = 1:numIterations
+    insideBlobArray = zeros([numIterations 1]);
+    for p = 1:numIterations
+        xmid = xEdges(p*20);
+        ymid = yEdges(p*20);
+    
+        
+        insideBlobArray(p) = inpolygon( xmid , ymid , xCorners, yCorners );
+    end
+end
+
+insideBlob = sum(insideBlobArray);
+
+end
+
 
 
 %% END POINT CONDITIONS & SLOPE COMPARING
@@ -447,12 +475,18 @@ if realsize == 3 && startGreetings
             if pp == trapSide
                 continue
             end
-            if small1 == 0
+            if length(pp) <= small1 || small1 == 0
+                small2 = small1;
                 small1 = length(pp);
             else
                 small2 = length(pp);
             end
         end
+        
+        if longestPerfFit
+            trapSide = find(length == small2);
+        end
+        
         % 2-1 Traversal
         if traversal == 2
             xmid = ( x(corners(trapSide,1)) + x(corners(trapSide,2)) )/2 ;          % Checking if mid-point of long side is close to true center
@@ -460,7 +494,9 @@ if realsize == 3 && startGreetings
             deltax = xmid - t_xcenter ;
             deltay = ymid - t_ycenter ;
             if sqrt(deltax^2 + deltay^2) < mean(length)/3 && ~notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && highSideVariance == 0  && endGreetings
-                string = 'Trapezoid';
+                if ~notAlone( xmid , ymid , xEdges, yEdges, fitScale )
+                    string = 'Trapezoid';
+                end
                 if perp + almostPerp == 1 && lowSideVariance && abs(small1 - small2) < min(length)/3.5
                     string = 'Quarter Circle';
                 end
@@ -488,11 +524,13 @@ if realsize == 3 && startGreetings
                 deltax = xmid - t_xcenter ;
                 deltay = ymid - t_ycenter ;
                 if sqrt(deltax^2 + deltay^2) < mean(length)/3 && ~notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && highSideVariance == 0  && endGreetings
-                    string = 'Trapezoid';
+                    if ~notAlone( xmid , ymid , xEdges, yEdges, fitScale )
+                        string = 'Trapezoid';
+                    end
                     if perp + almostPerp == 1 && lowSideVariance && abs(small1 - small2) < min(length)/3.5
                         string = 'Quarter Circle';
                     end
-                    return;
+                    return;                    
                 end
                 
                 % Stars disabled
@@ -518,7 +556,7 @@ if realsize == 3 && startGreetings
     if perfectFit + goodFit == 3
     
         
-        if  endHugs && centersAllign && highSideVariance == 0
+        if  endHugs && centersAllign && highSideVariance == 0 && xdim > 150
             string = 'Tringle';
             return
         end
@@ -538,6 +576,36 @@ if realsize < 4
     return
 end
 
+
+%% AREA DETERMINATION
+% Calculates the area of each potential shape and determines shape viability
+
+%Semicircle
+semiViable = 0;
+semiSortaViable = 0;
+radius = length(associatedLongIndex)/2;
+theoreticalArea = pi*(radius^2)/2;
+actualArea = polyarea(xCorners,yCorners);
+difference = theoreticalArea - actualArea;
+percentage = difference/theoreticalArea * 100;
+
+if difference < .30 * theoreticalArea && difference >= 0
+    semiViable = 1;
+elseif difference < .35 * theoreticalArea && difference >= 0
+    semiSortaViable = 1;
+end
+
+
+%Rectangle
+rectViable = 0;
+shortSide = min(length);
+if ~notAlone( xcenter , ycenter , xEdges, yEdges, shortSide*.45 )
+    rectViable = 1;
+end
+
+
+
+
 %% FOUR SIDED SHAPES
 %Anything beyond this point must be a square, rectangle, circle, trapezoid or unknown
 
@@ -547,7 +615,7 @@ deltax = x(corners(2,2)) - x(corners(4,2)) ;
 deltay = y(corners(2,2)) - y(corners(4,2)) ;
 distance = sqrt(  deltax^2  + deltay^2 ) ;
 
-if distance < 75
+if distance < .25*xdim
     endGreetings = 1;
 end
 
@@ -560,13 +628,13 @@ deltax = x(corners(1,1)) - x(corners(3,1)) ;
 deltay = y(corners(1,1)) - y(corners(3,1)) ;
 distance = sqrt(  deltax^2  + deltay^2 ) ;
 
-if distance < 75
+if distance < .25*xdim
     startGreetings = 1;
 end
 
 
 
-if perfectFit + goodFit <= 1 && centersAllign && centerSpaced && endGreetings && startGreetings   %Catches circles
+if perfectFit + goodFit <= 1 && centersAllign && centerSpaced && endGreetings && startGreetings && insideBlob <= 2 && max(length) < 280  && xdim > 200  %Catches circles
     string = 'Circle';  %***All regular n-sided shapes with n > 4 are likely to be caught here as circles
     return
 end
@@ -577,17 +645,20 @@ if endGreetings && startGreetings && centersAllign && centerSpacedforApproxs
     if perfectFit + goodFit >= 3 && par + almostPar == 2 && perp >= 2 && par >= 1
         if (( max(length) - min(length)) < .20* mean(length) )
             string = 'Square';
-        else
+        elseif rectViable
             string = 'Rectangle';
         end
-        
-    elseif perfectFit == 4 && par == 1 && perp <= 2 && highSideVariance == 0
-        string = 'Trapezoid';
-    elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit == 1 ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && tiny == 1  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit == 1 && par == 1 && perp <= 2 && centerSpaced)) && quartPerp == 0
-        string = 'Semicircle';
-        if (longPerfFit + goodFit >= 3 && tiny == 1 && tringleAlert)
-            string = 'Tringle';
+       
+%     4 - sided Trapezoids disabled        
+%     elseif perfectFit == 4 && par + almostPar == 1 && perp <= 2 && highSideVariance == 0
+%         string = 'Trapezoid';
+    elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && highSideVariance  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit && par == 1 && perp <= 2 && centerSpaced)) && (quartPerp == 0 || (tiny && highSideVariance))
+        if semiViable || (par == 1 && semiSortaViable)
+            string = 'Semicircle';
         end
+    elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit ) && (perp <= 2 && highSideVariance && perfectFit <= 3 ) && centerSpaced)) && (quartPerp == 0 || (tiny && highSideVariance)) && (longPerfFit + goodFit >= 3 && tiny && tringleAlert)
+            string = 'Tringle';
+        
     elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2 && quartPerp
 %         [~,shortSide] = min(length);
 %         if longestPerfFit == 1 && abs(associatedLongIndex - shortSide) == 1

@@ -1,4 +1,4 @@
-%function [] = PerfectCell( img, fileName )
+function [] = PerfectCell( img, fileName )
 
 
 % Input: Any RGB image // Can be a direct frame from the camera // CANNOT BE ONLY BW
@@ -7,7 +7,7 @@
 %      ****This implementation first determines IF there is a shape, and then classifies it****
 %      ****This implementation assumes there is atmost one shape per image****
 % Output: Classifies the shape as:
-%          Triangle, Circle, Square, Rectangle, Trapezoid, Star(disabled), Cross, Semicircle, or Quarter Circle
+%          Triangle, Circle, Square, Rectangle, Trapezoid(some orientations diableed), Star(disabled), Cross, Semicircle, or Quarter Circle
 %          Also attempts to recognize QRC for squares / rectangles
 %      Note: Detects Squares, Rectangles, Triangles, and Circles with relatively high
 %            accuracy, the rest have decent to poor accuracy, especially
@@ -41,7 +41,7 @@ workspace;
 
 %% IMAGE SELECTION
 
-% img_bad = imread('images/test/bad3.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+% img_bad = imread('images/test/bad7.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
 % img_test = imread('images/test/test.jpg');
 % img_square = imread('images/test/square.jpg');
@@ -50,30 +50,30 @@ workspace;
 % img_barelyRectangle = imread('images/test/barelyRectangle.jpg');
 % img_star = imread('images/test/star.jpg');
 % img_cross = imread('images/test/cross2.jpg');
-% img_trap = imread('images/test/trap.png');
+% img_trap = imread('images/test/trap6.png');
 % img_nothing = imread('images/test/nothing3.jpg');
 % img_DBZ = imread('images/test/DBZ.png');
 % img_potato = imread('images/test/potato.jpg');
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
-% img_semi = imread('images/test/semi3.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
-% img_quart = imread('images/test/quart19.jpg');
+% img_semi = imread('images/test/semi14.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
+% img_quart = imread('images/test/quart.jpg');
 % img_tringle = imread('images/test/tringle6.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
 % img_qr = imread('images/test/qr2.jpg');
-img_test = imread('images/image-115.jpg');
+% img_test = imread('images/image-139.jpg');
 
 % ******* Change the img assignment to debug with another image *******
 
-img = img_test;
+%img = img_test;
 
 % Special Crop to fix ffmpeg capture
 img = imcrop(img, [0 10 1920 1072]);
 
 % ******* Select Appropriate Modes *******
 
-mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
+mode = 0;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
 
 writeEnable = 1;   % 0 - No Write               1 - shape written on disk
 
