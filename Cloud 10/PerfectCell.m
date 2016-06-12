@@ -1,6 +1,5 @@
 function [] = PerfectCell( img, fileName )
 
-
 % Input: Any RGB image // Can be a direct frame from the camera // CANNOT BE ONLY BW
 %      ****Does NOT have to contain a shape****
 %      ****Does NOT need cropping of the shape****
@@ -41,7 +40,7 @@ workspace;
 
 %% IMAGE SELECTION
 
-% img_bad = imread('images/test/bad7.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+% img_bad = imread('images/test/bad3.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
 % img_test = imread('images/test/test.jpg');
 % img_square = imread('images/test/square.jpg');
@@ -50,7 +49,7 @@ workspace;
 % img_barelyRectangle = imread('images/test/barelyRectangle.jpg');
 % img_star = imread('images/test/star.jpg');
 % img_cross = imread('images/test/cross2.jpg');
-% img_trap = imread('images/test/trap6.png');
+% img_trap = imread('images/test/trap.png');
 % img_nothing = imread('images/test/nothing3.jpg');
 % img_DBZ = imread('images/test/DBZ.png');
 % img_potato = imread('images/test/potato.jpg');
@@ -62,7 +61,7 @@ workspace;
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
 % img_qr = imread('images/test/qr2.jpg');
-% img_test = imread('images/image-139.jpg');
+% img_test = imread('images3/image-087.jpg');
 
 % ******* Change the img assignment to debug with another image *******
 
@@ -75,23 +74,30 @@ img = imcrop(img, [0 10 1920 1072]);
 
 mode = 0;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
 
-writeEnable = 1;   % 0 - No Write               1 - shape written on disk
+writeEnable = 1;   % 0 - No Write               1 - Shape written on disk
 
-% Use 0 for competition =)
+% Use mode 0 and writeEnable 1 for competition =)
 
 %% PRE-IMAGE PROCESSING
 % Standard for all images(no initial crop)
 
-filter = .80;                               % <--- Initial canny threshold (filter is decremented by .1 every iteration)
-RGB2 = imadjust(img,[.1 .1 .1; .9 .9 .9]);
-gray = rgb2gray(RGB2);
-a_gray = imadjust(gray);
-thisImage = edge(a_gray, 'canny', filter);
+% Outdated Pre-Processing
+% filter = .80;                               % <--- Initial canny threshold (filter is decremented by .1 every iteration)
+% RGB2 = imadjust(img,[.1 .1 .1; .9 .9 .9]);
+% gray = rgb2gray(RGB2);
+% a_gray = imadjust(gray);
+% thisImage = edge(a_gray, 'canny', filter);
+
+
+% Best/Optimal Pre-Processing
+filter = .15;
+interEdges = coloredges(img);
+thisImage = edge(interEdges, 'Canny', filter);
 
 % Used to fill small holes/discontinuities
 se5 = strel('square', 5);
 se3 = strel('square', 3);
-%se2 = strel('square', 2);
+se2 = strel('square', 2);
 
 if mode
     subplot(2,2,3);
@@ -120,7 +126,7 @@ try
     
     %% ITERATIVE NOISE FILTER; loops until a shape is found or filter hits limit
     
-    while  repeat && filter >=  .50
+    while  repeat && filter >=  .05
         
         % thisImageThick is used to determine the boundary of a blob after dilating to fill holes (not displayed though)
         thisImageThick = imdilate(thisImage,se5);
@@ -193,7 +199,7 @@ try
                 numberOfWhite = sum(thisBlob(:));
                 
                 % If image is too small, skip to next blob
-                if numberOfWhite < 50
+                if numberOfWhite < 80
                     tryToFlip = 0;
                     tryToRotate = 0;
                     tryToShear = 0;
@@ -214,7 +220,7 @@ try
                 %             thisBlob = bwmorph(thisBlob, 'thin', Inf);
                 
                 thisBlob = bwareaopen(thisBlob, 10);
-                thisBlob = imdilate(thisBlob,se3);
+                %thisBlob = imdilate(thisBlob,se3);
                 thisBlob = imresize(thisBlob, [300 NaN], 'Method', 'bicubic') ;
                 thisBlob = imfill(thisBlob,'holes');
                 thisBlob = bwperim(thisBlob, 8);             
@@ -392,10 +398,16 @@ try
         
         % INCREMENT AND PROCESS NOISE FILTER
         if ~tryToFlip && ~tryToRotate && ~tryToShear
-            %prevImage = thisImage;
-            
-            filter = filter - .10;
-            thisImage = edge(a_gray, 'canny', filter);
+
+              % Old pre-processing
+%             filter = filter - .10;
+%             thisImage = edge(a_gray, 'canny', filter);
+             if abs(filter - .10) < .01
+                filter = .07;
+             else
+                filter = filter - .05;                
+             end
+             thisImage = edge(interEdges, 'canny', filter);
         end
     end
     
@@ -406,6 +418,10 @@ catch
     else
         shape = 'Something went wrong =/';
     end
+end
+
+if ~exist('shape', 'var')
+    shape = 'Empty';
 end
 
 % PLACE CENTER OF ALL NEIGHBORS
@@ -437,9 +453,9 @@ end
 %% OUTPUT APPROPRIATE FINAL IMAGE
 
 % Catches almost flat rectangles (that were detected as squares)
-if strcmp(shape, 'Square') && abs(boundary(3) - boundary(4)) >= abs(.25*mean(boundary(3), boundary(4)))
-    shape = 'Rectangle';
-end
+ if strcmp(shape, 'Square') && abs(boundary(3) - boundary(4)) >= abs(.25*mean(boundary(3), boundary(4)))
+     shape = 'Rectangle';
+ end
 
 if strcmp(shape, 'Unknown') || strcmp(shape, 'KAMEHAMEHA') || strcmp(shape, '5/7') || strcmp(shape, 'Lee') || strcmp(shape, 'Riven') || strcmp(shape, 'Unknown') || (strcmp(shape, 'Cross') && crossConfirm == 0)
     shape = 'Empty';
@@ -460,7 +476,7 @@ end
 
 imshow(croppedOutput);
 
-if length(cornersArray) >= 3 && ~strcmp(shape, 'Empty')
+if exist('coernersArray', 'var') && length(cornersArray) >= 3 && ~strcmp(shape, 'Empty')
     
     if length(cornersArray) == 3
         r = [xArray(cornersArray(1,1)) xArray(cornersArray(1,2)) xArray(cornersArray(2,2))];
@@ -495,8 +511,8 @@ else
 end
 
 if strcmp(shape,'Square') || strcmp(shape,'Rectangle')
-    imwrite(imresize(croppedOutput, 5), 'qr_output.jpg');
-    message = read_qr(imread('qr_output.jpg'));
+    imwrite(imresize(croppedOutput, 5), 'qr_test.jpg');
+    message = read_qr(imread('qr_test.jpg'));
     if ~strcmp(message, 'error')
         if mode
             subplot(2,3,1);
@@ -516,4 +532,3 @@ if writeEnable && ~strcmp(shape, 'Empty')
     saveas(gcf, strcat('images_results/',fileName))
 end
 
-why

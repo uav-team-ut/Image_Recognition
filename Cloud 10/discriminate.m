@@ -25,7 +25,7 @@ function [ string , xcenter, ycenter] = discriminate( corners, x, y, index, trav
 xcenter = 0;
 ycenter = 0;
 
-fitScale = 20;
+fitScale = .06666 * xdim;
 shitScale = 35;
 
 [realsize,~] = size(corners);
@@ -132,7 +132,7 @@ for a = 1:realsize
         end      
     end
      
-    if length(a) >= 200 && a ~= associatedLongIndex && length(associatedLongIndex) - length (a) < 25
+    if length(a) >= 180 && a ~= associatedLongIndex && length(associatedLongIndex) - length (a) < 25
         tringleAlert = 1;
     end
     
@@ -493,6 +493,10 @@ if realsize == 3 && startGreetings
             ymid = ( y(corners(trapSide,1)) + y(corners(trapSide,2)) )/2 ;
             deltax = xmid - t_xcenter ;
             deltay = ymid - t_ycenter ;
+%             deltax2 = ( x(corners(1,2)) - x(corners(3,2)) )/2 ;
+%             deltay2 = ( y(corners(1,2)) - y(corners(3,2)) )/2 ;
+            
+            
             if sqrt(deltax^2 + deltay^2) < mean(length)/3 && ~notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && highSideVariance == 0  && endGreetings
                 if ~notAlone( xmid , ymid , xEdges, yEdges, fitScale )
                     string = 'Trapezoid';
@@ -523,6 +527,12 @@ if realsize == 3 && startGreetings
                 ymid = ( y(corners(trapSide,1)) + y(corners(trapSide,2)) )/2 ;
                 deltax = xmid - t_xcenter ;
                 deltay = ymid - t_ycenter ;
+%                 otherLongSide = mod(trapSide + 2, 3);
+%                 x2mid = ( x(corners(otherLongSide,1)) + x(corners(otherLongSide,2)) )/2 ;
+%                 y2mid = ( y(corners(otherLongSide,1)) + y(corners(otherLongSide,2)) )/2 ;
+%                 deltax2 = xmid - x2mid ;
+%                 deltay2 = ymid - y2mid ;
+                
                 if sqrt(deltax^2 + deltay^2) < mean(length)/3 && ~notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && highSideVariance == 0  && endGreetings
                     if ~notAlone( xmid , ymid , xEdges, yEdges, fitScale )
                         string = 'Trapezoid';
@@ -645,20 +655,21 @@ if endGreetings && startGreetings && centersAllign && centerSpacedforApproxs
     if perfectFit + goodFit >= 3 && par + almostPar == 2 && perp >= 2 && par >= 1
         if (( max(length) - min(length)) < .20* mean(length) )
             string = 'Square';
-        elseif rectViable
+        elseif rectViable && longPerfFit >= 1
             string = 'Rectangle';
         end
        
 %     4 - sided Trapezoids disabled        
 %     elseif perfectFit == 4 && par + almostPar == 1 && perp <= 2 && highSideVariance == 0
 %         string = 'Trapezoid';
-    elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && highSideVariance  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit && par == 1 && perp <= 2 && centerSpaced)) && (quartPerp == 0 || (tiny && highSideVariance))
+    end
+    if ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit ) && ((perp <= 1 && tiny == 0 && perfectFit <= 3) || (perp <= 2 && highSideVariance  && perfectFit <= 2 )) && centerSpaced) || (perfectFit + goodFit == 3 && longestPerfFit && par == 1 && perp <= 2 && centerSpaced)) && (quartPerp == 0 || (tiny && highSideVariance))
         if semiViable || (par == 1 && semiSortaViable)
             string = 'Semicircle';
-        end
-    elseif ((perfectFit + goodFit >= 2 && ( longPerfFit == 1 || longestPerfFit ) && (perp <= 2 && highSideVariance && perfectFit <= 3 ) && centerSpaced)) && (quartPerp == 0 || (tiny && highSideVariance)) && (longPerfFit + goodFit >= 3 && tiny && tringleAlert)
-            string = 'Tringle';
         
+        elseif ((perfectFit + goodFit >= 2 && ( longPerfFit >= 1 || longestPerfFit ) && perp <= 2 && perfectFit <= 3  && centerSpaced)) && (quartPerp == 0 || (tiny && highSideVariance)) && longPerfFit >= 2 && ( tiny || min(length) < 100 ) && tringleAlert
+            string = 'Tringle';
+        end
     elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2 && quartPerp
 %         [~,shortSide] = min(length);
 %         if longestPerfFit == 1 && abs(associatedLongIndex - shortSide) == 1

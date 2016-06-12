@@ -1,25 +1,38 @@
 close all; 
-img_test = imread('images/test/qr2.jpg');
- img = img_test;
- filter = .6;
- RGB2 = imadjust(img, [.1 .1 .1; .6 .6 .6]);
+%img_test = imread('images/test/bad7.jpg');
+img_test = imread('images/image-100.jpg');
+
+img = img_test;
+%img2 = imsharpen(img);
+filter = .15;
+%RGB2 = imadjust(img, [.1 .1 .1; .9 .9 .9]);
 se = strel('square',2);
 % se2 = strel('square',1);
 gray = rgb2gray(img);
-% gray = wiener2(gray,[5 5]);
-a_gray = imadjust(gray);
-thisImage = edge(a_gray, 'Canny', filter);
- thisImage = imdilate(thisImage,se);
- thisImage = imfill(thisImage,'holes');
+%gray = wiener2(gray,[5 5]);
+%a_gray = imadjust(gray);
+%a_gray = imfilter(a_gray,fspecial('unsharp'));
+%[~, threshold] = edge(a_gray, 'sobel');
+thisImage = coloredges(img);
+thisImage2 = coloredges(img2);
+figure;
+thisImage = edge(thisImage, 'Canny', filter);
+thisImage2 = edge(thisImage2, 'Canny', filter);
+ %thisImage = imdilate(thisImage,se);
+ %thisImage = imfill(thisImage,'holes');
 % thisImage = bwmorph(thisImage, 'remove');
 % imshow(thisImage)
 % thisImage = imdilate(thisImage,se);
 %thisImage = imclose(thisImage, se);
 % thisImage = bwmorph(thisImage, 'thin', Inf);
-thisImage = bwperim(thisImage, 4);
+%thisImage = bwperim(thisImage, 4);
 % thisImage = imfill(thisImage, 'holes');
 % thisImage = ExtractNLargestBlobs(thisImage, 3);
+subplot(1,2,1);
 imshow(thisImage);
+subplot(1,2,2);
+imshow(thisImage2);
+title('With imsharpen');
 
 
 % % Credit to the based god Image Analyst

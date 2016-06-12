@@ -1,7 +1,7 @@
 images_processed = cell(1,1);
 while true,
     
-    files = dir('images/*.jpg')';
+    files = dir('images3/*.jpg')';
     
     for i = 1:length(files)
         for im = images_processed
@@ -12,7 +12,7 @@ while true,
     end
     
     for file = files
-        img_orig = imread(['images/' file.name]);
+        img_orig = imread(['images3/' file.name]);
         %imshow(img_orig);
         %figure()
         PerfectCell(img_orig, file.name)
