@@ -1,4 +1,4 @@
-function [] = PerfectCell( img, fileName )
+ function [] = PerfectCell( img, fileName )
 
 % Input: Any RGB image // Can be a direct frame from the camera // CANNOT BE ONLY BW
 %      ****Does NOT have to contain a shape****
@@ -6,7 +6,7 @@ function [] = PerfectCell( img, fileName )
 %      ****This implementation first determines IF there is a shape, and then classifies it****
 %      ****This implementation assumes there is atmost one shape per image****
 % Output: Classifies the shape as:
-%          Triangle, Circle, Square, Rectangle, Trapezoid(some orientations diableed), Star(disabled), Cross, Semicircle, or Quarter Circle
+%          Triangle, Circle, Square, Rectangle, Trapezoid(some orientations diabled), Star(disabled), Cross(disabled), Semicircle, or Quarter Circle
 %          Also attempts to recognize QRC for squares / rectangles
 %      Note: Detects Squares, Rectangles, Triangles, and Circles with relatively high
 %            accuracy, the rest have decent to poor accuracy, especially
@@ -34,7 +34,7 @@ function [] = PerfectCell( img, fileName )
 
 clc;
 %clear;         % Avoid using clear; it forces MATLAB to recompile all functions and slows performance
-workspace;
+%workspace;
 %close all;
 
 
@@ -56,19 +56,17 @@ workspace;
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
 % img_semi = imread('images/test/semi14.jpg');        % semi12 / semi13.jpg fail (it's complicated...)
-% img_quart = imread('images/test/quart.jpg');
+% img_quart = imread('images/test/quart7.jpg');
 % img_tringle = imread('images/test/tringle6.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
 % img_qr = imread('images/test/qr2.jpg');
-% img_test = imread('images3/image-087.jpg');
+% img_test = imread('images/image-060.jpg');
 
 % ******* Change the img assignment to debug with another image *******
 
-%img = img_test;
+% img = img_test;
 
-% Special Crop to fix ffmpeg capture
-img = imcrop(img, [0 10 1920 1072]);
 
 % ******* Select Appropriate Modes *******
 
@@ -92,11 +90,18 @@ writeEnable = 1;   % 0 - No Write               1 - Shape written on disk
 % Best/Optimal Pre-Processing
 filter = .15;
 interEdges = coloredges(img);
+
+% Special Crop to fix ffmpeg capture
+topCut = 10;
+bottomCut = 12;
+interEdges = imcrop(interEdges,[0 topCut 1920 1072-bottomCut] );
+
 thisImage = edge(interEdges, 'Canny', filter);
+
 
 % Used to fill small holes/discontinuities
 se5 = strel('square', 5);
-se3 = strel('square', 3);
+% se3 = strel('square', 3);
 se2 = strel('square', 2);
 
 if mode
@@ -220,7 +225,7 @@ try
                 %             thisBlob = bwmorph(thisBlob, 'thin', Inf);
                 
                 thisBlob = bwareaopen(thisBlob, 10);
-                %thisBlob = imdilate(thisBlob,se3);
+                thisBlob = imdilate(thisBlob,se2);
                 thisBlob = imresize(thisBlob, [300 NaN], 'Method', 'bicubic') ;
                 thisBlob = imfill(thisBlob,'holes');
                 thisBlob = bwperim(thisBlob, 8);             
@@ -467,6 +472,7 @@ else
     % This crop pads the sides with more of the original image
     %croppedOutput = imcrop(img, boundary + [-5,-5,10,10]);
     %croppedOutput = imcrop(img, boundary + [-2,-2,4,4]);
+    boundary = boundary + [ 0 topCut 0 0]; % Adjusting for ffmpeg crop
     croppedOutput = imcrop(img, boundary);
 end
 
@@ -476,7 +482,7 @@ end
 
 imshow(croppedOutput);
 
-if exist('coernersArray', 'var') && length(cornersArray) >= 3 && ~strcmp(shape, 'Empty')
+if exist('cornersArray', 'var') && length(cornersArray) >= 3 && ~strcmp(shape, 'Empty')
     
     if length(cornersArray) == 3
         r = [xArray(cornersArray(1,1)) xArray(cornersArray(1,2)) xArray(cornersArray(2,2))];
@@ -529,6 +535,6 @@ end
 drawnow('update');
 
 if writeEnable && ~strcmp(shape, 'Empty')
-    saveas(gcf, strcat('images_results/',fileName))
+    saveas(gcf, strcat('images_results/',fileName));
 end
 

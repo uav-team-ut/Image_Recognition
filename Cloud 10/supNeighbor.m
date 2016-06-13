@@ -50,7 +50,7 @@ while count <= 10
         end
         
         %       Max neighbor distance at 50
-        while  ( sqrt(deltay^2 + deltax^2) > 50 && deltax ~= 0 ) || deltay > 0 || (deltax == 0 && sqrt(deltay^2 + deltax^2) > 20) || (deltax == 1 && sqrt(deltay^2 + deltax^2) > 20) || sqrt(deltay^2 + deltax^2) < 2
+        while  ( sqrt(deltay^2 + deltax^2) > 50 && deltax ~= 0 ) || deltay > 0 || (deltax == 0 && deltay > 20) || (deltax == 1 && sqrt(deltay^2 + deltax^2) ) || (deltay == 0 && deltax < 15) || sqrt(deltay^2 + deltax^2) < 2
             
             n_index = n_index + 1;
             
@@ -69,7 +69,7 @@ while count <= 10
         
     else                            %GOING DOWN
         
-        while  sqrt(deltay^2 + deltax^2) > 50 || deltay < 0 ||  (deltax == 0 &&  sqrt(deltay^2 + deltax^2) < 5) || sqrt(deltay^2 + deltax^2) < 2
+        while  sqrt(deltay^2 + deltax^2) > 50 || deltay < 0 ||  (deltax == 0 &&  deltay < 15) || sqrt(deltay^2 + deltax^2) < 2 || (deltay == 0 && deltax < 15)
             
             n_index = n_index + 1;
             

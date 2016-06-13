@@ -26,7 +26,7 @@ xcenter = 0;
 ycenter = 0;
 
 fitScale = .06666 * xdim;
-shitScale = 35;
+shitScale = 35 ;
 
 [realsize,~] = size(corners);
 
@@ -457,7 +457,7 @@ if realsize == 3 && startGreetings
         return;
     end
         
-    if perfectFit == 1 && longPerfFit == 1 && centersAllign && ~highSideVariance && endGreetings && centerSpacedforApproxs   %Catches acute 3-sided Semicircles
+    if perfectFit == 1 && longestPerfFit == 1 && centersAllign && ~highSideVariance && endGreetings && centerSpacedforApproxs   %Catches acute 3-sided Semicircles
         string = 'Semicircle';
         return
     end
@@ -498,7 +498,7 @@ if realsize == 3 && startGreetings
             
             
             if sqrt(deltax^2 + deltay^2) < mean(length)/3 && ~notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && highSideVariance == 0  && endGreetings
-                if ~notAlone( xmid , ymid , xEdges, yEdges, fitScale )
+                if ~notAlone( xmid , ymid , xEdges, yEdges, min(length)/3 )
                     string = 'Trapezoid';
                 end
                 if perp + almostPerp == 1 && lowSideVariance && abs(small1 - small2) < min(length)/3.5
@@ -534,7 +534,7 @@ if realsize == 3 && startGreetings
 %                 deltay2 = ymid - y2mid ;
                 
                 if sqrt(deltax^2 + deltay^2) < mean(length)/3 && ~notAlone( xcenter , ycenter , xEdges, yEdges, fitScale ) && highSideVariance == 0  && endGreetings
-                    if ~notAlone( xmid , ymid , xEdges, yEdges, fitScale )
+                    if ~notAlone( xmid , ymid , xEdges, yEdges, min(length)/3 )
                         string = 'Trapezoid';
                     end
                     if perp + almostPerp == 1 && lowSideVariance && abs(small1 - small2) < min(length)/3.5
@@ -597,7 +597,7 @@ radius = length(associatedLongIndex)/2;
 theoreticalArea = pi*(radius^2)/2;
 actualArea = polyarea(xCorners,yCorners);
 difference = theoreticalArea - actualArea;
-percentage = difference/theoreticalArea * 100;
+% percentage = difference/theoreticalArea * 100;
 
 if difference < .30 * theoreticalArea && difference >= 0
     semiViable = 1;
@@ -608,13 +608,20 @@ end
 
 %Rectangle
 rectViable = 0;
-shortSide = min(length);
-if ~notAlone( xcenter , ycenter , xEdges, yEdges, shortSide*.45 )
+avgSide = mean(length);
+if ~notAlone( xcenter , ycenter , xEdges, yEdges, avgSide*.35 ) && min(length) > 50
     rectViable = 1;
 end
 
-
-
+%Quarter Circle
+% quartViable = 0;
+% xmid = ( x(corners(1,2)) + x(corners(3,2)) ) / 2 ;
+% ymid = ( y(corners(1,2)) + y(corners(3,2)) ) / 2 ;
+% deltax = xcenter - xmid;
+% deltay = ycenter - ymid;
+% if sqrt(deltax^2 + deltay^2) < max(length)/5
+%     quartViable = 1;
+% end
 
 %% FOUR SIDED SHAPES
 %Anything beyond this point must be a square, rectangle, circle, trapezoid or unknown
@@ -668,15 +675,16 @@ if endGreetings && startGreetings && centersAllign && centerSpacedforApproxs
             string = 'Semicircle';
         
         elseif ((perfectFit + goodFit >= 2 && ( longPerfFit >= 1 || longestPerfFit ) && perp <= 2 && perfectFit <= 3  && centerSpaced)) && (quartPerp == 0 || (tiny && highSideVariance)) && longPerfFit >= 2 && ( tiny || min(length) < 100 ) && tringleAlert
-            string = 'Tringle';
+            string = 'Triangle';
         end
     elseif perfectFit >= 2 && perp >= 1 && centerSpaced && longPerfFit >= 2 && quartPerp
-%         [~,shortSide] = min(length);
-%         if longestPerfFit == 1 && abs(associatedLongIndex - shortSide) == 1
-%             string = 'Tringle';
-%         else
-        string = 'Quarter Circle';
-%         end
+        if perp + almostPerp <= 2
+            string = 'Quarter Circle';
+        elseif min(length) < 80
+            string = 'Triangle';
+        else
+            string = 'Square';
+        end 
     end
     
 end
