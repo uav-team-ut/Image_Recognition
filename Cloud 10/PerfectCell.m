@@ -1,4 +1,4 @@
- function [] = PerfectCell( img, fileName )
+% function [] = PerfectCell( img, fileName )
 
 % Input: Any RGB image // Can be a direct frame from the camera // CANNOT BE ONLY BW
 %      ****Does NOT have to contain a shape****
@@ -40,7 +40,7 @@ clc;
 
 %% IMAGE SELECTION
 
-% img_bad = imread('images/test/bad3.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
+ img_bad = imread('images/test/bad2.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
 % img_test = imread('images/test/test.jpg');
 % img_square = imread('images/test/square.jpg');
@@ -50,8 +50,8 @@ clc;
 % img_star = imread('images/test/star.jpg');
 % img_cross = imread('images/test/cross2.jpg');
 % img_trap = imread('images/test/trap.png');
-% img_nothing = imread('images/test/nothing3.jpg');
-% img_DBZ = imread('images/test/DBZ.png');
+ img_nothing = imread('images/test/nothing3.jpg');
+ img_DBZ = imread('images/test/DBZ.png');
 % img_potato = imread('images/test/potato.jpg');
 % img_texas = imread('images/test/texas.jpg');
 % img_circle = imread('images/test/circle.png');     % circle.png fails (it's poles are missing)
@@ -60,19 +60,19 @@ clc;
 % img_tringle = imread('images/test/tringle6.jpg');
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
-% img_qr = imread('images/test/qr2.jpg');
-% img_test = imread('images/image-060.jpg');
+ img_qr = imread('images/test/qr2.jpg');
+ img_test = imread('images/test/cross4.jpg');
 
 % ******* Change the img assignment to debug with another image *******
 
-% img = img_test;
+ img = img_test;
 
 
 % ******* Select Appropriate Modes *******
 
-mode = 0;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
+mode = 1;       % 0 - Fast/Performance Mode     1 - Debugging Mode (Shows Approximations)
 
-writeEnable = 1;   % 0 - No Write               1 - Shape written on disk
+writeEnable = 0;   % 0 - No Write               1 - Shape written on disk
 
 % Use mode 0 and writeEnable 1 for competition =)
 
