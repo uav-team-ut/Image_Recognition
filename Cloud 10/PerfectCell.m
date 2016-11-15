@@ -42,7 +42,7 @@ clc;
 
  img_bad = imread('images/test/bad2.jpg');         % tringle in bad4.jpg fails (bump on top side causes problems with neighbor detection)
 % img_crop = imread('images/test/crop.jpg');        % crop2.jpg fails (corners are missing due to crop)
-% img_test = imread('images/test/test.jpg');
+ img_test = imread('images/test/test.jpg');
 % img_square = imread('images/test/square.jpg');
 % img_difficult = imread('images/test/IMG_2376.jpg');
 % img_rectangle = imread('images/test/rectangle3.jpg');
@@ -61,7 +61,7 @@ clc;
 % img_shear = imread('images/test/shear7.jpg');
 % img_impossible = imread('images/test/impossible.jpg');  % Too much god damn noise
  img_qr = imread('images/test/qr2.jpg');
- img_test = imread('images/test/cross4.jpg');
+% img_test = imread('images/test/image-141.jpg');
 
 % ******* Change the img assignment to debug with another image *******
 
